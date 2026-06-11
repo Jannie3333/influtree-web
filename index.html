@@ -398,7 +398,7 @@ section{padding:96px 0;}
       <a href="#pricing">Pricing</a>
       <a href="login.html">Dashboard</a>
     </div>
-    <div class="nav-right">
+    <div class="nav-right" id="nav-right">
       <a href="login.html"><button class="btn-login">Log in</button></a>
       <a href="register.html"><button class="btn-nav-cta">Try for free</button></a>
     </div>
@@ -884,7 +884,22 @@ section{padding:96px 0;}
   </div>
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
+// Auth state — swap nav buttons when logged in
+;(async () => {
+  const sb = supabase.createClient(
+    'https://fxzffwqhzybrrsgiajyc.supabase.co',
+    'sb_publishable_NiFVL8pxuUhwEDUsym1TDA_NPFmqqED'
+  )
+  const { data: { session } } = await sb.auth.getSession()
+  if (session) {
+    document.getElementById('nav-right').innerHTML =
+      `<span style="font-size:14px;color:#64748B;font-weight:500">${session.user.email}</span>
+       <a href="dashboard.html"><button class="btn-nav-cta">My Dashboard</button></a>`
+  }
+})()
+
 // Feature tabs
 document.querySelectorAll('.tab-btn').forEach(btn => {
   btn.addEventListener('click', () => {
