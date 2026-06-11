@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>InfluTree.ai — Discover Instagram Influencers at Scale</title>
+<meta name="description" content="Find, analyze, and contact Instagram influencers through their social graph. Auto-discover emails, track engagement, and export to CSV."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+/* ── Reset ── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'Inter',system-ui,sans-serif;background:#fff;color:#0F172A;line-height:1.6;-webkit-font-smoothing:antialiased;}
+a{text-decoration:none;color:inherit;}
+img{display:block;max-width:100%;}
+button{font-family:inherit;cursor:pointer;}
+
+/* ── Tokens ── */
+:root{
+  --blue:    #0284C7;
+  --blue-h:  #0369A1;
+  --sky:     #0EA5E9;
+  --sky-100: #E0F2FE;
+  --sky-50:  #F0F9FF;
+  --slate-50: #F8FAFC;
+  --slate-100:#F1F5F9;
+  --slate-200:#E2E8F0;
+  --slate-400:#94A3B8;
+  --slate-500:#64748B;
+  --slate-600:#475569;
+  --slate-700:#334155;
+  --slate-900:#0F172A;
+  --r:14px;
+  --shadow-card:0 1px 3px rgba(0,0,0,.06),0 4px 16px rgba(0,0,0,.04);
+  --shadow-lg:0 8px 32px rgba(14,165,233,.14),0 2px 8px rgba(0,0,0,.06);
+}
+
+/* ── Layout ── */
+.wrap{max-width:1140px;margin:0 auto;padding:0 28px;}
+section{padding:96px 0;}
+
+/* ════════════════════════════════════════
+   NAV
+════════════════════════════════════════ */
+.nav{
+  position:sticky;top:0;z-index:200;
+  background:rgba(255,255,255,.88);
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--slate-200);
+}
+.nav-inner{display:flex;align-items:center;height:66px;gap:32px;}
+.nav-logo{display:flex;align-items:center;gap:10px;font-size:18px;font-weight:800;color:var(--slate-900);flex-shrink:0;}
+.logo-mark{
+  width:34px;height:34px;border-radius:9px;
+  background:linear-gradient(135deg,#0EA5E9,#2563EB);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 2px 8px rgba(14,165,233,.4);
+}
+.logo-mark svg{width:20px;height:20px;}
+.logo-dot{color:var(--sky);}
+.nav-links{display:flex;align-items:center;gap:2px;flex:1;}
+.nav-links a{padding:8px 14px;font-size:14px;font-weight:500;color:var(--slate-600);border-radius:8px;transition:all .15s;}
+.nav-links a:hover{color:var(--slate-900);background:var(--slate-100);}
+.nav-right{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.btn-login{padding:8px 16px;font-size:14px;font-weight:600;color:var(--slate-700);background:transparent;border:1.5px solid var(--slate-200);border-radius:9px;transition:all .15s;}
+.btn-login:hover{border-color:var(--sky-100);background:var(--sky-50);}
+.btn-nav-cta{padding:9px 20px;font-size:14px;font-weight:700;color:#fff;background:var(--blue);border:none;border-radius:9px;box-shadow:0 2px 8px rgba(2,132,199,.35);transition:all .2s;}
+.btn-nav-cta:hover{background:var(--blue-h);box-shadow:0 4px 14px rgba(2,132,199,.45);transform:translateY(-1px);}
+
+/* ════════════════════════════════════════
+   HERO
+════════════════════════════════════════ */
+.hero{padding:80px 0 64px;overflow:hidden;position:relative;}
+.hero-inner{display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center;}
+
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--sky-50);border:1px solid var(--sky-100);
+  padding:5px 13px;border-radius:100px;
+  font-size:13px;font-weight:600;color:var(--blue);
+  margin-bottom:22px;
+}
+.hero-eyebrow .pulse{width:7px;height:7px;border-radius:50%;background:var(--sky);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(14,165,233,.5);}50%{box-shadow:0 0 0 6px rgba(14,165,233,0);}}
+
+.hero h1{font-size:58px;font-weight:900;line-height:1.1;letter-spacing:-.025em;color:var(--slate-900);margin-bottom:20px;}
+.hero h1 em{font-style:normal;background:linear-gradient(90deg,#0EA5E9,#2563EB);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.hero-desc{font-size:18px;color:var(--slate-500);line-height:1.72;max-width:480px;margin-bottom:36px;}
+.hero-ctas{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:28px;}
+.btn-cta-main{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;font-size:16px;font-weight:700;color:#fff;background:var(--blue);border:none;border-radius:11px;box-shadow:0 4px 18px rgba(2,132,199,.4);transition:all .22s;}
+.btn-cta-main:hover{background:var(--blue-h);transform:translateY(-2px);box-shadow:0 8px 24px rgba(2,132,199,.45);}
+.btn-cta-ghost{display:inline-flex;align-items:center;gap:8px;padding:14px 24px;font-size:16px;font-weight:600;color:var(--slate-700);background:#fff;border:1.5px solid var(--slate-200);border-radius:11px;transition:all .2s;}
+.btn-cta-ghost:hover{border-color:var(--sky);color:var(--blue);}
+.hero-trust{font-size:13px;color:var(--slate-400);display:flex;align-items:center;gap:10px;}
+.trust-stars{color:#F59E0B;letter-spacing:1px;}
+.trust-sep{color:var(--slate-200);}
+
+/* ── Browser Mockup ── */
+.hero-visual{position:relative;}
+.browser{border-radius:16px;box-shadow:var(--shadow-lg);overflow:hidden;border:1px solid var(--slate-200);background:#fff;}
+.b-bar{background:var(--slate-50);border-bottom:1px solid var(--slate-100);padding:11px 16px;display:flex;align-items:center;gap:8px;}
+.b-dots{display:flex;gap:5px;}
+.b-dot{width:11px;height:11px;border-radius:50%;}
+.bd-r{background:#FC5F5A;}.bd-y{background:#FDBC40;}.bd-g{background:#34C84A;}
+.b-url{flex:1;background:var(--slate-100);border-radius:6px;padding:5px 12px;font-size:12px;color:var(--slate-400);margin-left:10px;}
+.b-body{display:flex;height:370px;}
+/* Instagram side */
+.ig-pane{flex:1;background:#fafafa;padding:20px;}
+.ig-ph{display:flex;align-items:center;gap:12px;margin-bottom:16px;}
+.ig-av{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#0EA5E9,#2563EB);display:flex;align-items:center;justify-content:center;color:#fff;font-size:17px;font-weight:800;flex-shrink:0;}
+.ig-un{font-size:14px;font-weight:700;color:#262626;}
+.ig-nm{font-size:12px;color:#8e8e8e;}
+.ig-st{display:flex;gap:18px;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid #e0e0e0;}
+.ig-st-n{font-size:14px;font-weight:700;color:#262626;display:block;}
+.ig-st-l{font-size:11px;color:#8e8e8e;}
+.ig-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;}
+.ig-cell{aspect-ratio:1;border-radius:2px;}
+.c1{background:linear-gradient(135deg,#BAE6FD,#DBEAFE);}
+.c2{background:linear-gradient(135deg,#A5F3FC,#BAE6FD);}
+.c3{background:linear-gradient(135deg,#6EE7B7,#A5F3FC);}
+.c4{background:linear-gradient(135deg,#FDE68A,#FCA5A5);}
+.c5{background:linear-gradient(135deg,#C4B5FD,#A5B4FC);}
+.c6{background:linear-gradient(135deg,#FCA5A5,#FDBA74);}
+/* Panel side */
+.it-panel{width:240px;flex-shrink:0;background:var(--sky-50);border-left:1px solid var(--sky-100);padding:14px;overflow-y:auto;}
+.panel-top{display:flex;align-items:center;gap:7px;margin-bottom:12px;}
+.p-icon{width:20px;height:20px;border-radius:5px;background:linear-gradient(135deg,#0EA5E9,#2563EB);display:flex;align-items:center;justify-content:center;}
+.p-icon svg{width:12px;height:12px;}
+.p-brand{font-size:12px;font-weight:800;}
+.p-brand .dot{color:var(--sky);}
+.profile-box{background:#fff;border-radius:10px;padding:11px;border:1px solid var(--sky-100);margin-bottom:11px;}
+.pb-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.pb-av{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#0EA5E9,#2563EB);display:flex;align-items:center;justify-content:center;color:#fff;font-size:9px;font-weight:700;}
+.pb-name{font-size:12px;font-weight:700;color:var(--slate-900);}
+.pb-loc{font-size:10px;color:var(--slate-400);}
+.pb-stats{display:grid;grid-template-columns:1fr 1fr;gap:5px;}
+.pbs{background:var(--sky-50);border-radius:6px;padding:5px 7px;}
+.pbs-n{font-size:12px;font-weight:800;color:var(--slate-900);}
+.pbs-l{font-size:10px;color:var(--slate-400);}
+.eng-green{color:#16A34A !important;}
+.sim-lbl{font-size:10px;font-weight:700;color:var(--slate-500);text-transform:uppercase;letter-spacing:.06em;margin-bottom:7px;}
+.c-card{background:#fff;border-radius:8px;padding:8px 10px;margin-bottom:5px;border:1px solid var(--sky-100);display:flex;align-items:center;gap:7px;transition:border-color .15s;}
+.c-card:hover{border-color:var(--sky);}
+.c-av{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:8px;font-weight:700;flex-shrink:0;}
+.ca1{background:linear-gradient(135deg,#0EA5E9,#2563EB);}
+.ca2{background:linear-gradient(135deg,#6366F1,#A78BFA);}
+.ca3{background:linear-gradient(135deg,#10B981,#0EA5E9);}
+.ca4{background:linear-gradient(135deg,#F59E0B,#EF4444);}
+.c-info{flex:1;min-width:0;}
+.c-name{font-size:10px;font-weight:700;color:var(--slate-900);}
+.c-meta{font-size:9px;color:var(--slate-400);}
+.c-plus{font-size:12px;color:var(--blue);font-weight:700;cursor:pointer;}
+
+/* ════════════════════════════════════════
+   LOGOS
+════════════════════════════════════════ */
+.logos{padding:36px 0;border-top:1px solid var(--slate-100);border-bottom:1px solid var(--slate-100);overflow:hidden;}
+.logos-lbl{font-size:13px;font-weight:600;color:var(--slate-400);text-align:center;margin-bottom:24px;text-transform:uppercase;letter-spacing:.08em;}
+.logos-track-wrap{overflow:hidden;position:relative;}
+.logos-track-wrap::before,.logos-track-wrap::after{content:'';position:absolute;top:0;bottom:0;width:120px;z-index:2;pointer-events:none;}
+.logos-track-wrap::before{left:0;background:linear-gradient(90deg,#fff,transparent);}
+.logos-track-wrap::after{right:0;background:linear-gradient(-90deg,#fff,transparent);}
+.logos-track{display:flex;align-items:center;gap:64px;width:max-content;animation:marquee 28s linear infinite;}
+.logos-track:hover{animation-play-state:paused;}
+@keyframes marquee{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
+.logo-item{font-size:18px;font-weight:800;color:var(--slate-300);letter-spacing:-.02em;white-space:nowrap;user-select:none;transition:color .2s;}
+.logo-item:hover{color:var(--slate-500);}
+
+/* ════════════════════════════════════════
+   FEATURE TABS
+════════════════════════════════════════ */
+.features{background:var(--slate-50);}
+.section-eye{display:inline-block;font-size:12px;font-weight:700;color:var(--blue);background:var(--sky-50);border:1px solid var(--sky-100);padding:5px 13px;border-radius:100px;margin-bottom:14px;text-transform:uppercase;letter-spacing:.07em;}
+.section-h{font-size:44px;font-weight:900;letter-spacing:-.022em;line-height:1.12;color:var(--slate-900);margin-bottom:14px;}
+.section-sub{font-size:18px;color:var(--slate-500);max-width:560px;line-height:1.7;}
+.section-head{margin-bottom:56px;}
+
+.tabs-nav{display:flex;gap:6px;background:#fff;border:1px solid var(--slate-200);border-radius:12px;padding:5px;width:fit-content;margin-bottom:48px;}
+.tab-btn{padding:10px 22px;font-size:14px;font-weight:600;border:none;border-radius:8px;background:transparent;color:var(--slate-500);transition:all .2s;cursor:pointer;}
+.tab-btn.on{background:var(--blue);color:#fff;box-shadow:0 2px 8px rgba(2,132,199,.35);}
+.tab-btn:hover:not(.on){background:var(--slate-100);color:var(--slate-700);}
+.tab-pane{display:none;}
+.tab-pane.on{display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center;}
+.tab-text-eye{font-size:12px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.07em;margin-bottom:12px;}
+.tab-text h3{font-size:32px;font-weight:800;line-height:1.2;letter-spacing:-.02em;margin-bottom:14px;}
+.tab-text p{font-size:16px;color:var(--slate-500);line-height:1.75;margin-bottom:22px;}
+.tab-bullets{list-style:none;display:flex;flex-direction:column;gap:10px;}
+.tab-bullets li{display:flex;align-items:flex-start;gap:10px;font-size:15px;color:var(--slate-600);}
+.tab-bullets li::before{content:'✓';font-weight:800;color:var(--blue);flex-shrink:0;margin-top:1px;}
+.tab-visual{position:relative;}
+.feat-mockup{
+  background:#fff;border-radius:16px;box-shadow:var(--shadow-lg);
+  border:1px solid var(--slate-200);overflow:hidden;
+}
+.fm-header{background:var(--slate-50);border-bottom:1px solid var(--slate-100);padding:11px 14px;display:flex;align-items:center;gap:6px;}
+.fm-dots{display:flex;gap:5px;}
+.fm-label{font-size:11px;color:var(--slate-400);margin-left:8px;}
+.fm-body{padding:20px;}
+/* Discover mockup */
+.disc-profile{display:flex;align-items:center;gap:10px;padding:12px;background:var(--sky-50);border-radius:10px;border:1px solid var(--sky-100);margin-bottom:14px;}
+.dp-av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#0EA5E9,#2563EB);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;}
+.dp-name{font-size:13px;font-weight:700;}
+.dp-handle{font-size:11px;color:var(--slate-400);}
+.dp-badge{margin-left:auto;background:var(--sky-100);color:var(--blue);font-size:10px;font-weight:700;padding:3px 8px;border-radius:100px;}
+.disc-label{font-size:10px;font-weight:700;color:var(--slate-400);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;}
+.disc-cards{display:flex;flex-direction:column;gap:6px;}
+.dc{display:flex;align-items:center;gap:9px;background:#fff;border-radius:8px;padding:8px 10px;border:1px solid var(--slate-100);}
+.dc-av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:9px;font-weight:700;flex-shrink:0;}
+.dc-name{font-size:12px;font-weight:700;flex:1;}
+.dc-f{font-size:11px;color:var(--slate-400);}
+.dc-save{font-size:18px;color:var(--blue);cursor:pointer;}
+/* Analytics mockup */
+.stats-grid-m{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px;}
+.stat-box{background:var(--sky-50);border-radius:9px;padding:12px;border:1px solid var(--sky-100);}
+.stat-box-n{font-size:20px;font-weight:900;color:var(--slate-900);}
+.stat-box-l{font-size:11px;color:var(--slate-400);}
+.chart-bars{display:flex;align-items:flex-end;gap:6px;height:80px;background:var(--slate-50);border-radius:8px;padding:10px 12px;}
+.bar{border-radius:4px 4px 0 0;background:linear-gradient(180deg,#0EA5E9,#2563EB);flex:1;min-height:10px;}
+/* Email mockup */
+.email-chain{display:flex;flex-direction:column;gap:8px;}
+.em-row{display:flex;align-items:center;gap:9px;padding:10px;background:var(--sky-50);border:1px solid var(--sky-100);border-radius:9px;}
+.em-av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:9px;font-weight:700;flex-shrink:0;}
+.em-name{font-size:12px;font-weight:700;flex:1;}
+.em-badge-green{background:#DCFCE7;color:#16A34A;font-size:10px;font-weight:700;padding:2px 8px;border-radius:5px;}
+.em-badge-gray{background:var(--slate-100);color:var(--slate-400);font-size:10px;font-weight:700;padding:2px 8px;border-radius:5px;}
+/* Export mockup */
+.csv-preview{background:var(--slate-50);border-radius:8px;overflow:hidden;border:1px solid var(--slate-200);}
+.csv-head{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;background:var(--slate-100);padding:7px 12px;font-size:10px;font-weight:700;color:var(--slate-500);text-transform:uppercase;letter-spacing:.04em;}
+.csv-row{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;padding:8px 12px;font-size:11px;border-top:1px solid var(--slate-100);align-items:center;}
+.csv-name{font-weight:600;color:var(--slate-900);}
+.csv-eng{color:#16A34A;font-weight:700;}
+.csv-email{font-size:10px;color:var(--blue);}
+
+/* ════════════════════════════════════════
+   HOW IT WORKS
+════════════════════════════════════════ */
+.how{}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;position:relative;}
+.steps::after{content:'';position:absolute;top:28px;left:16%;right:16%;height:2px;background:linear-gradient(90deg,var(--sky-100),var(--sky),var(--sky-100));}
+.step{background:#fff;border-radius:var(--r);padding:36px 30px;border:1px solid var(--slate-200);text-align:center;position:relative;z-index:1;transition:all .22s;}
+.step:hover{border-color:var(--sky-100);box-shadow:var(--shadow-lg);transform:translateY(-4px);}
+.step-n{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#0EA5E9,#2563EB);color:#fff;font-size:20px;font-weight:800;display:flex;align-items:center;justify-content:center;margin:0 auto 22px;box-shadow:0 4px 14px rgba(14,165,233,.4);}
+.step h3{font-size:19px;font-weight:700;margin-bottom:10px;}
+.step p{font-size:15px;color:var(--slate-500);line-height:1.65;}
+
+/* ════════════════════════════════════════
+   FEATURE SHOWCASES (alternating)
+════════════════════════════════════════ */
+.showcase{padding:80px 0;}
+.showcase-inner{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;}
+.showcase-inner.flip{direction:rtl;}
+.showcase-inner.flip > *{direction:ltr;}
+.showcase-text .tag{font-size:12px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.07em;margin-bottom:12px;}
+.showcase-text h2{font-size:38px;font-weight:800;line-height:1.18;letter-spacing:-.02em;margin-bottom:14px;}
+.showcase-text p{font-size:16px;color:var(--slate-500);line-height:1.75;margin-bottom:24px;}
+.check-list{list-style:none;display:flex;flex-direction:column;gap:9px;}
+.check-list li{display:flex;align-items:flex-start;gap:10px;font-size:15px;color:var(--slate-600);}
+.cl-check{width:20px;height:20px;border-radius:5px;background:var(--sky-50);border:1px solid var(--sky-100);display:flex;align-items:center;justify-content:center;color:var(--blue);font-weight:800;font-size:11px;flex-shrink:0;margin-top:1px;}
+.showcase-img{background:var(--sky-50);border-radius:16px;border:1px solid var(--slate-200);padding:28px;box-shadow:var(--shadow-lg);}
+/* Dashboard mockup */
+.dash-mini{background:#fff;border-radius:12px;border:1px solid var(--slate-100);overflow:hidden;}
+.dash-top{background:var(--slate-50);padding:10px 14px;border-bottom:1px solid var(--slate-100);font-size:11px;color:var(--slate-400);display:flex;align-items:center;gap:8px;}
+.dash-content{padding:16px;}
+.dash-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;}
+.d-kpi{background:var(--sky-50);border-radius:8px;padding:10px;border:1px solid var(--sky-100);}
+.d-kpi-n{font-size:18px;font-weight:900;color:var(--slate-900);}
+.d-kpi-l{font-size:10px;color:var(--slate-400);}
+.dash-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--slate-50);}
+.dash-row:last-child{border-bottom:none;}
+.dr-av{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:8px;font-weight:700;}
+.dr-name{font-size:11px;font-weight:700;flex:1;}
+.dr-eng{font-size:11px;color:#16A34A;font-weight:700;}
+.dr-country{font-size:10px;color:var(--slate-400);}
+
+/* ════════════════════════════════════════
+   TESTIMONIALS
+════════════════════════════════════════ */
+.testimonials{background:var(--slate-50);}
+.tes-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
+.tes-card{background:#fff;border-radius:var(--r);padding:32px;border:1px solid var(--slate-200);transition:all .22s;}
+.tes-card:hover{border-color:var(--sky-100);box-shadow:var(--shadow-card);transform:translateY(-2px);}
+.tes-stars{color:#F59E0B;font-size:15px;letter-spacing:2px;margin-bottom:16px;}
+.tes-quote{font-size:16px;color:var(--slate-700);line-height:1.75;margin-bottom:24px;}
+.tes-author{display:flex;align-items:center;gap:12px;}
+.tes-av{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;font-weight:700;flex-shrink:0;}
+.ta1{background:linear-gradient(135deg,#0EA5E9,#2563EB);}
+.ta2{background:linear-gradient(135deg,#6366F1,#A78BFA);}
+.ta3{background:linear-gradient(135deg,#10B981,#0EA5E9);}
+.tes-name{font-size:14px;font-weight:700;color:var(--slate-900);}
+.tes-role{font-size:13px;color:var(--slate-400);}
+
+/* ════════════════════════════════════════
+   PRICING
+════════════════════════════════════════ */
+.pricing{}
+.pricing-head{text-align:center;margin-bottom:64px;}
+.pricing-head .section-sub{margin:0 auto;}
+.toggle-wrap{display:inline-flex;align-items:center;gap:10px;background:var(--slate-100);border-radius:100px;padding:4px;margin-top:24px;}
+.toggle-opt{padding:7px 18px;font-size:13px;font-weight:600;border-radius:100px;color:var(--slate-500);cursor:pointer;transition:all .15s;}
+.toggle-opt.on{background:#fff;color:var(--slate-900);box-shadow:0 1px 4px rgba(0,0,0,.1);}
+.save-tag{font-size:11px;font-weight:700;color:#16A34A;background:#DCFCE7;padding:3px 9px;border-radius:100px;margin-left:2px;}
+.cards-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+.p-card{background:#fff;border-radius:18px;padding:36px;border:1.5px solid var(--slate-200);transition:all .22s;}
+.p-card:hover:not(.p-pop){border-color:var(--slate-300);box-shadow:var(--shadow-card);}
+.p-pop{border-color:var(--blue);box-shadow:0 4px 24px rgba(2,132,199,.18);}
+.p-badge{display:inline-block;background:var(--blue);color:#fff;font-size:11px;font-weight:700;padding:4px 12px;border-radius:100px;margin-bottom:16px;}
+.p-tier{font-size:13px;font-weight:700;color:var(--blue);margin-bottom:6px;}
+.p-price{display:flex;align-items:baseline;gap:3px;margin-bottom:6px;}
+.p-curr{font-size:18px;font-weight:700;color:var(--slate-400);margin-top:6px;}
+.p-amount{font-size:48px;font-weight:900;line-height:1;color:var(--slate-900);}
+.p-period{font-size:15px;color:var(--slate-400);}
+.p-desc{font-size:14px;color:var(--slate-500);margin-bottom:28px;line-height:1.55;}
+.p-div{height:1px;background:var(--slate-100);margin-bottom:22px;}
+.p-feats{list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:30px;}
+.p-feats li{display:flex;align-items:flex-start;gap:9px;font-size:14px;color:var(--slate-600);}
+.p-check{color:var(--blue);font-weight:800;font-size:14px;flex-shrink:0;margin-top:1px;}
+.p-x{color:var(--slate-300);font-size:14px;flex-shrink:0;margin-top:1px;}
+.p-x ~ span{color:var(--slate-300);}
+.btn-p-outline{display:block;width:100%;padding:13px;text-align:center;font-size:15px;font-weight:700;color:var(--slate-700);background:#fff;border:2px solid var(--slate-200);border-radius:11px;transition:all .2s;}
+.btn-p-outline:hover{border-color:var(--sky);color:var(--blue);}
+.btn-p-fill{display:block;width:100%;padding:13px;text-align:center;font-size:15px;font-weight:700;color:#fff;background:var(--blue);border:none;border-radius:11px;box-shadow:0 4px 16px rgba(2,132,199,.4);transition:all .2s;}
+.btn-p-fill:hover{background:var(--blue-h);transform:translateY(-1px);box-shadow:0 6px 20px rgba(2,132,199,.45);}
+
+/* ════════════════════════════════════════
+   CTA BANNER
+════════════════════════════════════════ */
+.cta-band{
+  margin:0 28px 80px;
+  background:linear-gradient(135deg,#0284C7 0%,#2563EB 100%);
+  border-radius:24px;
+  padding:80px 64px;
+  text-align:center;
+  position:relative;overflow:hidden;
+}
+.cta-band::before{content:'';position:absolute;top:-80px;right:-40px;width:380px;height:380px;background:rgba(255,255,255,.06);border-radius:50%;}
+.cta-band::after{content:'';position:absolute;bottom:-60px;left:-30px;width:280px;height:280px;background:rgba(255,255,255,.05);border-radius:50%;}
+.cta-band h2{font-size:42px;font-weight:900;color:#fff;margin-bottom:12px;position:relative;z-index:1;}
+.cta-band p{font-size:18px;color:rgba(255,255,255,.78);margin-bottom:36px;position:relative;z-index:1;}
+.cta-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;position:relative;z-index:1;}
+.btn-white{padding:14px 32px;font-size:16px;font-weight:700;background:#fff;color:var(--blue);border:none;border-radius:11px;box-shadow:0 4px 16px rgba(0,0,0,.15);transition:all .2s;}
+.btn-white:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.2);}
+.btn-outline-white{padding:14px 32px;font-size:16px;font-weight:600;background:transparent;color:#fff;border:2px solid rgba(255,255,255,.5);border-radius:11px;transition:all .2s;}
+.btn-outline-white:hover{border-color:#fff;background:rgba(255,255,255,.1);}
+
+/* ════════════════════════════════════════
+   FOOTER
+════════════════════════════════════════ */
+.footer{background:var(--slate-900);padding:60px 0 36px;}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:48px;margin-bottom:48px;}
+.footer-brand-desc{font-size:14px;color:var(--slate-500);max-width:260px;margin-top:12px;line-height:1.7;}
+.f-logo{display:flex;align-items:center;gap:9px;}
+.f-logo .logo-mark{box-shadow:none;}
+.f-logo-name{font-size:16px;font-weight:800;color:#fff;}
+.f-logo-name .dot{color:var(--sky);}
+.footer-col h5{font-size:11px;font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:.06em;margin-bottom:14px;}
+.footer-col a{display:block;font-size:14px;color:var(--slate-500);padding:4px 0;transition:color .15s;}
+.footer-col a:hover{color:var(--sky);}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.07);padding-top:24px;display:flex;justify-content:space-between;font-size:13px;color:var(--slate-600);}
+
+/* ── Responsive ── */
+@media(max-width:960px){
+  .hero-inner,.tab-pane.on,.showcase-inner,.tes-grid,.cards-grid{grid-template-columns:1fr;}
+  .hero h1{font-size:40px;}
+  .section-h{font-size:34px;}
+  .hero-visual,.showcase-img,.tab-visual{display:none;}
+  .steps{grid-template-columns:1fr;}
+  .steps::after{display:none;}
+  .logos-row{gap:28px;}
+  .footer-grid{grid-template-columns:1fr 1fr;}
+  .cta-band{margin:0 0 64px;border-radius:0;padding:60px 28px;}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="wrap nav-inner">
+    <a href="#" class="nav-logo">
+      <div class="logo-mark">
+        <svg viewBox="0 0 20 20" fill="none">
+          <circle cx="10" cy="8" r="2" fill="white"/>
+          <path d="M6 6 Q3 8 6 10" stroke="white" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+          <path d="M14 6 Q17 8 14 10" stroke="white" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+          <path d="M4 4 Q0 8 4 12" stroke="white" stroke-width="1.3" stroke-linecap="round" fill="none" opacity=".6"/>
+          <path d="M16 4 Q20 8 16 12" stroke="white" stroke-width="1.3" stroke-linecap="round" fill="none" opacity=".6"/>
+          <line x1="10" y1="10" x2="10" y2="16" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+          <path d="M7.5 16 Q10 14.5 12.5 16" stroke="white" stroke-width="1.3" stroke-linecap="round" fill="none"/>
+        </svg>
+      </div>
+      InfluTree
+    </a>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#how">How it works</a>
+      <a href="#pricing">Pricing</a>
+      <a href="login.html">Dashboard</a>
+    </div>
+    <div class="nav-right">
+      <a href="login.html"><button class="btn-login">Log in</button></a>
+      <a href="register.html"><button class="btn-nav-cta">Try for free</button></a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="wrap">
+    <div class="hero-inner">
+      <div>
+        <div class="hero-eyebrow"><div class="pulse"></div>Now with Email Auto-Discovery</div>
+        <h1>The influencer<br/>finder that <em>actually works</em></h1>
+        <p class="hero-desc">InfluTree maps Instagram's social graph to surface hidden creators — complete with real engagement rates, auto-discovered emails, and one-click CSV export.</p>
+        <div class="hero-ctas">
+          <a href="https://chrome.google.com/webstore" class="btn-cta-main">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg>
+            Add to Chrome — Free
+          </a>
+          <a href="login.html" class="btn-cta-ghost">View Dashboard →</a>
+        </div>
+        <div class="hero-trust">
+          <span class="trust-stars">★★★★★</span>
+          <span class="trust-sep">|</span>
+          <span>4.9 rating · 2,500+ marketers · No credit card</span>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="browser">
+          <div class="b-bar">
+            <div class="b-dots"><div class="b-dot bd-r"></div><div class="b-dot bd-y"></div><div class="b-dot bd-g"></div></div>
+            <div class="b-url">instagram.com/@tuisy.design</div>
+          </div>
+          <div class="b-body">
+            <div class="ig-pane">
+              <div class="ig-ph">
+                <div class="ig-av">T</div>
+                <div>
+                  <div class="ig-un">tuisy.design</div>
+                  <div class="ig-nm">UI/UX Designer · South Korea</div>
+                </div>
+              </div>
+              <div class="ig-st">
+                <div><span class="ig-st-n">182K</span><span class="ig-st-l">followers</span></div>
+                <div><span class="ig-st-n">48</span><span class="ig-st-l">posts</span></div>
+                <div><span class="ig-st-n">320</span><span class="ig-st-l">following</span></div>
+              </div>
+              <div class="ig-grid">
+                <div class="ig-cell c1"></div><div class="ig-cell c2"></div><div class="ig-cell c3"></div>
+                <div class="ig-cell c4"></div><div class="ig-cell c5"></div><div class="ig-cell c6"></div>
+              </div>
+            </div>
+            <div class="it-panel">
+              <div class="panel-top">
+                <div class="p-icon">
+                  <svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="8" r="2" fill="white"/><path d="M6 6 Q3 8 6 10" stroke="white" stroke-width="2" stroke-linecap="round" fill="none"/><path d="M14 6 Q17 8 14 10" stroke="white" stroke-width="2" stroke-linecap="round" fill="none"/><line x1="10" y1="10" x2="10" y2="16" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
+                </div>
+                <div class="p-brand">InfluTree<span class="dot">.ai</span></div>
+              </div>
+              <div class="profile-box">
+                <div class="pb-row">
+                  <div class="pb-av">T</div>
+                  <div><div class="pb-name">tuisy.design</div><div class="pb-loc">📍 South Korea</div></div>
+                </div>
+                <div class="pb-stats">
+                  <div class="pbs"><div class="pbs-n">182K</div><div class="pbs-l">Followers</div></div>
+                  <div class="pbs"><div class="pbs-n eng-green">6.8%</div><div class="pbs-l">Eng. Rate</div></div>
+                  <div class="pbs"><div class="pbs-n">48K</div><div class="pbs-l">Avg Views</div></div>
+                  <div class="pbs"><div class="pbs-n" style="font-size:10px;color:#0284C7">📧 Found</div><div class="pbs-l">Email</div></div>
+                </div>
+              </div>
+              <div class="sim-lbl">Similar Creators</div>
+              <div class="disc-cards">
+                <div class="c-card"><div class="c-av ca2">A</div><div class="c-info"><div class="c-name">aasvogel.kr</div><div class="c-meta">53.5K · South Korea</div></div><div class="c-plus">＋</div></div>
+                <div class="c-card"><div class="c-av ca3">1</div><div class="c-info"><div class="c-name">1.min.design</div><div class="c-meta">12.6K · 18.1% eng</div></div><div class="c-plus">＋</div></div>
+                <div class="c-card"><div class="c-av ca4">J</div><div class="c-info"><div class="c-name">j.ux_studio</div><div class="c-meta">24.1K · Japan</div></div><div class="c-plus">＋</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LOGOS -->
+<div class="logos">
+  <div class="logos-lbl">Trusted by marketing teams at</div>
+  <div class="logos-track-wrap">
+    <div class="logos-track">
+      <!-- first set -->
+      <span class="logo-item">ASOS</span>
+      <span class="logo-item">Glossier</span>
+      <span class="logo-item">REVOLVE</span>
+      <span class="logo-item">Gymshark</span>
+      <span class="logo-item">IHERB</span>
+      <span class="logo-item">Maybelline</span>
+      <span class="logo-item">Zalando</span>
+      <span class="logo-item">SHEIN</span>
+      <span class="logo-item">Sephora</span>
+      <span class="logo-item">H&amp;M</span>
+      <!-- duplicate for seamless loop -->
+      <span class="logo-item">ASOS</span>
+      <span class="logo-item">Glossier</span>
+      <span class="logo-item">REVOLVE</span>
+      <span class="logo-item">Gymshark</span>
+      <span class="logo-item">IHERB</span>
+      <span class="logo-item">Maybelline</span>
+      <span class="logo-item">Zalando</span>
+      <span class="logo-item">SHEIN</span>
+      <span class="logo-item">Sephora</span>
+      <span class="logo-item">H&amp;M</span>
+    </div>
+  </div>
+</div>
+
+<!-- FEATURE TABS -->
+<section class="features" id="features">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-eye">Features</div>
+      <h2 class="section-h">Everything in one workflow</h2>
+      <p class="section-sub">From finding creators to sending outreach — InfluTree handles the entire process without switching tools.</p>
+    </div>
+
+    <div class="tabs-nav">
+      <button class="tab-btn on" data-tab="discover">🔍 Discover</button>
+      <button class="tab-btn" data-tab="analyze">📊 Analyze</button>
+      <button class="tab-btn" data-tab="email">📧 Email</button>
+      <button class="tab-btn" data-tab="export">📥 Export</button>
+    </div>
+
+    <!-- Discover -->
+    <div class="tab-pane on" id="tp-discover">
+      <div class="tab-text">
+        <div class="tab-text-eye">Social Graph Discovery</div>
+        <h3>Find 100 creators in the time it takes to find 10</h3>
+        <p>Browse any Instagram profile and InfluTree instantly loads who they follow — sorted by follower count, filtered by niche. Go two levels deep to uncover creators your competitors haven't found yet.</p>
+        <ul class="tab-bullets">
+          <li>Up to 500 creators surfaced per search</li>
+          <li>Sorted by followers, filtered by engagement</li>
+          <li>Two levels deep into the social graph</li>
+          <li>Save creators with one tap</li>
+        </ul>
+      </div>
+      <div class="tab-visual">
+        <div class="feat-mockup">
+          <div class="fm-header"><div class="fm-dots"><div class="b-dot bd-r"></div><div class="b-dot bd-y"></div><div class="b-dot bd-g"></div></div><span class="fm-label">Similar Creators — InfluTree</span></div>
+          <div class="fm-body">
+            <div class="disc-profile">
+              <div class="dp-av" style="background:linear-gradient(135deg,#0EA5E9,#2563EB);color:#fff;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;">T</div>
+              <div><div class="dp-name">tuisy.design</div><div class="dp-handle">182K followers · South Korea</div></div>
+              <div class="dp-badge">Viewing</div>
+            </div>
+            <div class="disc-label">Top Connections · 24 shown</div>
+            <div class="disc-cards">
+              <div class="dc"><div class="dc-av" style="background:linear-gradient(135deg,#6366F1,#A78BFA)">A</div><div class="dc-name">aasvogel.kr</div><div class="dc-f">53.5K · 🇰🇷</div><div class="dc-save">＋</div></div>
+              <div class="dc"><div class="dc-av" style="background:linear-gradient(135deg,#10B981,#0EA5E9)">1</div><div class="dc-name">1.min.design</div><div class="dc-f">12.6K · 🇰🇷</div><div class="dc-save">＋</div></div>
+              <div class="dc"><div class="dc-av" style="background:linear-gradient(135deg,#F59E0B,#EF4444)">K</div><div class="dc-name">kim.dobe</div><div class="dc-f">8.6K · 🇰🇷</div><div class="dc-save">＋</div></div>
+              <div class="dc"><div class="dc-av" style="background:linear-gradient(135deg,#EC4899,#F43F5E)">J</div><div class="dc-name">j.ux_studio</div><div class="dc-f">24.1K · 🇯🇵</div><div class="dc-save">＋</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Analyze -->
+    <div class="tab-pane" id="tp-analyze">
+      <div class="tab-text">
+        <div class="tab-text-eye">Engagement Analytics</div>
+        <h3>Data that tells you who's actually worth working with</h3>
+        <p>See real engagement rates calculated from recent posts, average Reels views, and follower counts — directly from Instagram's API. Filter out inflated follower accounts before you reach out.</p>
+        <ul class="tab-bullets">
+          <li>Engagement rate from last 12 posts</li>
+          <li>Average Reels view count (trimmed mean)</li>
+          <li>Country and niche detection</li>
+          <li>Verified account badge</li>
+        </ul>
+      </div>
+      <div class="tab-visual">
+        <div class="feat-mockup">
+          <div class="fm-header"><div class="fm-dots"><div class="b-dot bd-r"></div><div class="b-dot bd-y"></div><div class="b-dot bd-g"></div></div><span class="fm-label">Profile Analytics</span></div>
+          <div class="fm-body">
+            <div class="stats-grid-m">
+              <div class="stat-box"><div class="stat-box-n">182K</div><div class="stat-box-l">Followers</div></div>
+              <div class="stat-box"><div class="stat-box-n" style="color:#16A34A">6.8%</div><div class="stat-box-l">Eng. Rate</div></div>
+              <div class="stat-box"><div class="stat-box-n">48K</div><div class="stat-box-l">Avg Views</div></div>
+              <div class="stat-box"><div class="stat-box-n">South Korea</div><div class="stat-box-l">Country</div></div>
+            </div>
+            <div style="font-size:10px;font-weight:700;color:var(--slate-400);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">Engagement last 12 posts</div>
+            <div class="chart-bars">
+              <div class="bar" style="height:55%"></div><div class="bar" style="height:70%"></div><div class="bar" style="height:45%"></div>
+              <div class="bar" style="height:80%"></div><div class="bar" style="height:60%"></div><div class="bar" style="height:90%"></div>
+              <div class="bar" style="height:65%"></div><div class="bar" style="height:75%"></div><div class="bar" style="height:50%"></div>
+              <div class="bar" style="height:85%"></div><div class="bar" style="height:70%"></div><div class="bar" style="height:60%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Email -->
+    <div class="tab-pane" id="tp-email">
+      <div class="tab-text">
+        <div class="tab-text-eye">Auto Email Discovery</div>
+        <h3>Find contact emails without leaving the extension</h3>
+        <p>InfluTree scans the creator's bio link page, every sub-link on that page (Linktree, litt.ly, personal sites), and contact pages — automatically. No manual digging required.</p>
+        <ul class="tab-bullets">
+          <li>Scans bio links and all sub-pages</li>
+          <li>Works with Linktree, litt.ly, personal sites</li>
+          <li>92% discovery rate on active creators</li>
+          <li>Saved directly to your collection</li>
+        </ul>
+      </div>
+      <div class="tab-visual">
+        <div class="feat-mockup">
+          <div class="fm-header"><div class="fm-dots"><div class="b-dot bd-r"></div><div class="b-dot bd-y"></div><div class="b-dot bd-g"></div></div><span class="fm-label">Email Discovery Scan</span></div>
+          <div class="fm-body">
+            <div style="font-size:10px;font-weight:700;color:var(--slate-400);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;">Saved Creators</div>
+            <div class="email-chain">
+              <div class="em-row"><div class="em-av" style="background:linear-gradient(135deg,#0EA5E9,#2563EB)">T</div><div class="em-name">tuisy.design</div><div class="em-badge-green">📧 hello@tuisy.kr</div></div>
+              <div class="em-row"><div class="em-av" style="background:linear-gradient(135deg,#6366F1,#A78BFA)">A</div><div class="em-name">aasvogel.kr</div><div class="em-badge-green">📧 Found</div></div>
+              <div class="em-row"><div class="em-av" style="background:linear-gradient(135deg,#10B981,#0EA5E9)">1</div><div class="em-name">1.min.design</div><div class="em-badge-green">📧 ddftpoi0429@gmail.com</div></div>
+              <div class="em-row"><div class="em-av" style="background:linear-gradient(135deg,#F59E0B,#EF4444)">K</div><div class="em-name">kim.dobe</div><div class="em-badge-gray">⏳ Scanning…</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Export -->
+    <div class="tab-pane" id="tp-export">
+      <div class="tab-text">
+        <div class="tab-text-eye">CSV Export</div>
+        <h3>Hand your team a ready-to-use spreadsheet</h3>
+        <p>One click exports your full creator list with all the data your team needs: followers, engagement rate, email address, country, and profile URL — formatted for Excel and Google Sheets.</p>
+        <ul class="tab-bullets">
+          <li>Includes email, country, engagement data</li>
+          <li>UTF-8 encoded, opens perfectly in Excel</li>
+          <li>Export straight from Chrome or the dashboard</li>
+          <li>Refreshes stale data before export</li>
+        </ul>
+      </div>
+      <div class="tab-visual">
+        <div class="feat-mockup">
+          <div class="fm-header"><div class="fm-dots"><div class="b-dot bd-r"></div><div class="b-dot bd-y"></div><div class="b-dot bd-g"></div></div><span class="fm-label">influtree-export-2026-06-03.csv</span></div>
+          <div class="fm-body">
+            <div class="csv-preview">
+              <div class="csv-head"><span>Username</span><span>Followers</span><span>Eng. Rate</span><span>Email</span></div>
+              <div class="csv-row"><span class="csv-name">tuisy.design</span><span>182,300</span><span class="csv-eng">6.8%</span><span class="csv-email">hello@tuisy.kr</span></div>
+              <div class="csv-row"><span class="csv-name">aasvogel.kr</span><span>53,500</span><span class="csv-eng">15.3%</span><span class="csv-email">Found</span></div>
+              <div class="csv-row"><span class="csv-name">1.min.design</span><span>12,600</span><span class="csv-eng">18.1%</span><span class="csv-email">ddftpoi…</span></div>
+              <div class="csv-row"><span class="csv-name">j.ux_studio</span><span>24,100</span><span class="csv-eng">9.7%</span><span class="csv-email">j.studio@…</span></div>
+            </div>
+            <div style="margin-top:14px;display:flex;gap:8px;">
+              <div style="padding:9px 18px;background:var(--blue);color:#fff;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;">↓ Download CSV</div>
+              <div style="padding:9px 18px;background:var(--sky-50);color:var(--blue);border:1px solid var(--sky-100);border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;">147 creators</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how" id="how">
+  <div class="wrap">
+    <div class="section-head" style="text-align:center">
+      <div class="section-eye">How it works</div>
+      <h2 class="section-h">From zero to 100 contacts in one afternoon</h2>
+      <p class="section-sub" style="margin:0 auto">Three simple steps — no training needed, no complex setup.</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-n">1</div>
+        <h3>Install the Extension</h3>
+        <p>Add InfluTree to Chrome in one click. Open Instagram and the side panel activates automatically on any profile page.</p>
+      </div>
+      <div class="step">
+        <div class="step-n">2</div>
+        <h3>Discover & Save Creators</h3>
+        <p>InfluTree loads who your target influencer follows, sorted by relevance. Tap ＋ to save anyone interesting to your collection.</p>
+      </div>
+      <div class="step">
+        <div class="step-n">3</div>
+        <h3>Export & Reach Out</h3>
+        <p>Download a complete CSV or open the web dashboard. Use built-in email templates to contact creators in seconds.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SHOWCASE 1: Dashboard -->
+<section class="showcase" style="background:var(--slate-50);">
+  <div class="wrap">
+    <div class="showcase-inner">
+      <div class="showcase-text">
+        <div class="tag">Web Dashboard</div>
+        <h2>Your full creator pipeline, always in sync</h2>
+        <p>Every creator you save in the Chrome extension appears instantly in your web dashboard. Filter by country, engagement rate, or email status — then act on the data.</p>
+        <ul class="check-list">
+          <li><div class="cl-check">✓</div>Live sync with Chrome extension</li>
+          <li><div class="cl-check">✓</div>Filter by country, niche, engagement</li>
+          <li><div class="cl-check">✓</div>Send email templates directly from dashboard</li>
+          <li><div class="cl-check">✓</div>Track outreach status per creator</li>
+        </ul>
+      </div>
+      <div class="showcase-img">
+        <div class="dash-mini">
+          <div class="dash-top">
+            <div class="b-dots"><div class="b-dot bd-r"></div><div class="b-dot bd-y"></div><div class="b-dot bd-g"></div></div>
+            <span style="margin-left:8px">app.influtree.ai/dashboard</span>
+          </div>
+          <div class="dash-content">
+            <div class="dash-kpis">
+              <div class="d-kpi"><div class="d-kpi-n">147</div><div class="d-kpi-l">Saved</div></div>
+              <div class="d-kpi"><div class="d-kpi-n" style="color:#16A34A">6.4%</div><div class="d-kpi-l">Avg Eng</div></div>
+              <div class="d-kpi"><div class="d-kpi-n">89</div><div class="d-kpi-l">Emails</div></div>
+            </div>
+            <div class="dash-row"><div class="dr-av" style="background:linear-gradient(135deg,#0EA5E9,#2563EB)">T</div><div class="dr-name">tuisy.design</div><div class="dr-eng">6.8%</div><div class="dr-country">🇰🇷 Korea</div></div>
+            <div class="dash-row"><div class="dr-av" style="background:linear-gradient(135deg,#6366F1,#A78BFA)">A</div><div class="dr-name">aasvogel.kr</div><div class="dr-eng">15.3%</div><div class="dr-country">🇰🇷 Korea</div></div>
+            <div class="dash-row"><div class="dr-av" style="background:linear-gradient(135deg,#10B981,#0EA5E9)">1</div><div class="dr-name">1.min.design</div><div class="dr-eng">18.1%</div><div class="dr-country">🇰🇷 Korea</div></div>
+            <div class="dash-row"><div class="dr-av" style="background:linear-gradient(135deg,#EC4899,#F43F5E)">J</div><div class="dr-name">j.ux_studio</div><div class="dr-eng">9.7%</div><div class="dr-country">🇯🇵 Japan</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials">
+  <div class="wrap">
+    <div class="section-head" style="text-align:center">
+      <div class="section-eye">Testimonials</div>
+      <h2 class="section-h">What marketers are saying</h2>
+    </div>
+    <div class="tes-grid">
+      <div class="tes-card">
+        <div class="tes-stars">★★★★★</div>
+        <p class="tes-quote">"We used to spend 2 hours manually searching for Korean beauty creators. InfluTree finds 50 in 10 minutes — with emails included. It's completely changed our workflow."</p>
+        <div class="tes-author">
+          <div class="tes-av ta1">S</div>
+          <div><div class="tes-name">Sarah Kim</div><div class="tes-role">Influencer Manager, Beauty Brand</div></div>
+        </div>
+      </div>
+      <div class="tes-card">
+        <div class="tes-stars">★★★★★</div>
+        <p class="tes-quote">"The email auto-discovery alone saves my team 5+ hours per week. Before InfluTree we had a VA just clicking through bio links. Now it's instant."</p>
+        <div class="tes-author">
+          <div class="tes-av ta2">M</div>
+          <div><div class="tes-name">Marcus L.</div><div class="tes-role">Head of Creator Partnerships</div></div>
+        </div>
+      </div>
+      <div class="tes-card">
+        <div class="tes-stars">★★★★★</div>
+        <p class="tes-quote">"I went from 0 to a list of 200 Korean designers with engagement rates and emails in a single afternoon. The extension is incredibly fast and accurate."</p>
+        <div class="tes-author">
+          <div class="tes-av ta3">J</div>
+          <div><div class="tes-name">Jenny Park</div><div class="tes-role">Founder, Fashion Agency Seoul</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing" id="pricing">
+  <div class="wrap">
+    <div class="pricing-head">
+      <div class="section-eye">Pricing</div>
+      <h2 class="section-h">Simple, honest pricing</h2>
+      <p class="section-sub">Start free. Upgrade when your campaign demands it. No long-term contracts.</p>
+      <div class="toggle-wrap">
+        <div class="toggle-opt on" id="tog-monthly">Monthly</div>
+        <div class="toggle-opt" id="tog-annual">Annual <span class="save-tag">Save 30%</span></div>
+      </div>
+    </div>
+    <div class="cards-grid">
+      <!-- Free -->
+      <div class="p-card">
+        <div class="p-tier">Starter</div>
+        <div class="p-price"><span class="p-curr">$</span><span class="p-amount">0</span><span class="p-period">/mo</span></div>
+        <p class="p-desc">Perfect for trying out InfluTree on a one-off campaign.</p>
+        <div class="p-div"></div>
+        <ul class="p-feats">
+          <li><span class="p-check">✓</span>Chrome extension (full)</li>
+          <li><span class="p-check">✓</span>20 creator profiles / month</li>
+          <li><span class="p-check">✓</span>3 CSV exports / month</li>
+          <li><span class="p-check">✓</span>Basic engagement analytics</li>
+          <li><span class="p-x">✗</span><span>Email auto-discovery</span></li>
+          <li><span class="p-x">✗</span><span>Web dashboard</span></li>
+          <li><span class="p-x">✗</span><span>Email templates</span></li>
+        </ul>
+        <a href="https://chrome.google.com/webstore" class="btn-p-outline">Install for Free</a>
+      </div>
+      <!-- Pro -->
+      <div class="p-card p-pop">
+        <div class="p-badge">⚡ Most Popular</div>
+        <div class="p-tier">Pro</div>
+        <div class="p-price"><span class="p-curr">$</span><span class="p-amount" id="pro-price">19</span><span class="p-period">/mo</span></div>
+        <p class="p-desc">For marketers running ongoing campaigns who need unlimited data.</p>
+        <div class="p-div"></div>
+        <ul class="p-feats">
+          <li><span class="p-check">✓</span><strong>Unlimited</strong> creator profiles</li>
+          <li><span class="p-check">✓</span><strong>Unlimited</strong> CSV exports</li>
+          <li><span class="p-check">✓</span>Email auto-discovery</li>
+          <li><span class="p-check">✓</span>Web dashboard</li>
+          <li><span class="p-check">✓</span>Email templates (4 types)</li>
+          <li><span class="p-check">✓</span>Country & niche detection</li>
+          <li><span class="p-check">✓</span>Priority support</li>
+        </ul>
+        <!-- 👇 Replace with your Stripe Payment Link -->
+        <a href="https://buy.stripe.com/YOUR_PRO_LINK" class="btn-p-fill" id="pro-btn">Start Pro — $19/mo</a>
+      </div>
+      <!-- Agency -->
+      <div class="p-card">
+        <div class="p-tier">Agency</div>
+        <div class="p-price"><span class="p-curr">$</span><span class="p-amount" id="agency-price">49</span><span class="p-period">/mo</span></div>
+        <p class="p-desc">For agencies managing multiple brands and creator rosters.</p>
+        <div class="p-div"></div>
+        <ul class="p-feats">
+          <li><span class="p-check">✓</span>Everything in Pro</li>
+          <li><span class="p-check">✓</span>5 team seats</li>
+          <li><span class="p-check">✓</span>Shared creator collections</li>
+          <li><span class="p-check">✓</span>Custom email templates</li>
+          <li><span class="p-check">✓</span>White-label CSV exports</li>
+          <li><span class="p-check">✓</span>API access (coming soon)</li>
+          <li><span class="p-check">✓</span>Dedicated account manager</li>
+        </ul>
+        <!-- 👇 Replace with your Stripe Payment Link -->
+        <a href="https://buy.stripe.com/YOUR_AGENCY_LINK" class="btn-p-outline" id="agency-btn">Get Agency — $49/mo</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BAND -->
+<div class="wrap">
+  <div class="cta-band">
+    <h2>Start finding influencers today</h2>
+    <p>Free to install · No credit card · Your first 20 creators in 5 minutes</p>
+    <div class="cta-btns">
+      <a href="https://chrome.google.com/webstore"><button class="btn-white">Add to Chrome — It's Free</button></a>
+      <a href="login.html"><button class="btn-outline-white">View Dashboard →</button></a>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <div class="f-logo">
+          <div class="logo-mark">
+            <svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="8" r="2" fill="white"/><path d="M6 6 Q3 8 6 10" stroke="white" stroke-width="1.8" stroke-linecap="round" fill="none"/><path d="M14 6 Q17 8 14 10" stroke="white" stroke-width="1.8" stroke-linecap="round" fill="none"/><path d="M4 4 Q0 8 4 12" stroke="white" stroke-width="1.3" stroke-linecap="round" fill="none" opacity=".6"/><path d="M16 4 Q20 8 16 12" stroke="white" stroke-width="1.3" stroke-linecap="round" fill="none" opacity=".6"/><line x1="10" y1="10" x2="10" y2="16" stroke="white" stroke-width="1.8" stroke-linecap="round"/><path d="M7.5 16 Q10 14.5 12.5 16" stroke="white" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg>
+          </div>
+          <div class="f-logo-name">InfluTree</div>
+        </div>
+        <p class="footer-brand-desc">Discover Instagram influencers through their social graph. Built for marketers who move fast.</p>
+      </div>
+      <div class="footer-col">
+        <h5>Product</h5>
+        <a href="#features">Features</a>
+        <a href="#pricing">Pricing</a>
+        <a href="login.html">Dashboard</a>
+        <a href="https://chrome.google.com/webstore">Chrome Extension</a>
+      </div>
+      <div class="footer-col">
+        <h5>Company</h5>
+        <a href="#">About</a>
+        <a href="#">Blog</a>
+        <a href="#">Changelog</a>
+        <a href="#">Contact</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 InfluTree.ai — All rights reserved</span>
+      <span>hello@influtree.ai</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Feature tabs
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('on'));
+    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('on'));
+    btn.classList.add('on');
+    document.getElementById('tp-' + btn.dataset.tab).classList.add('on');
+  });
+});
+
+// Pricing toggle
+const prices = { monthly: { pro: 19, agency: 49 }, annual: { pro: 13, agency: 34 } };
+document.getElementById('tog-monthly').addEventListener('click', function() {
+  this.classList.add('on'); document.getElementById('tog-annual').classList.remove('on');
+  document.getElementById('pro-price').textContent = prices.monthly.pro;
+  document.getElementById('agency-price').textContent = prices.monthly.agency;
+  document.getElementById('pro-btn').textContent = 'Start Pro — $19/mo';
+  document.getElementById('agency-btn').textContent = 'Get Agency — $49/mo';
+});
+document.getElementById('tog-annual').addEventListener('click', function() {
+  this.classList.add('on'); document.getElementById('tog-monthly').classList.remove('on');
+  document.getElementById('pro-price').textContent = prices.annual.pro;
+  document.getElementById('agency-price').textContent = prices.annual.agency;
+  document.getElementById('pro-btn').textContent = 'Start Pro — $13/mo';
+  document.getElementById('agency-btn').textContent = 'Get Agency — $34/mo';
+});
+
+// Smooth scroll
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const el = document.querySelector(a.getAttribute('href'));
+    if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth' }); }
+  });
+});
+</script>
+</body>
+</html>

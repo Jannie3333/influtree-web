@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Dashboard — InfluTree.ai</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;}
+body{font-family:'Inter',system-ui,sans-serif;background:#F0F9FF;color:#0F172A;-webkit-font-smoothing:antialiased;}
+a{text-decoration:none;color:inherit;}
+:root{
+  --sky:#0EA5E9;--blue:#2563EB;--sky-d:#0284C7;
+  --sky-bg:#F0F9FF;--sky-100:#E0F2FE;--sky-200:#BAE6FD;
+  --blue-50:#EFF6FF;--white:#FFFFFF;
+  --slate-50:#F8FAFC;--slate-100:#F1F5F9;--slate-200:#E2E8F0;
+  --slate-300:#CBD5E1;--slate-400:#94A3B8;--slate-500:#64748B;
+  --slate-600:#475569;--slate-700:#334155;--slate-900:#0F172A;
+  --grad:linear-gradient(135deg,#0EA5E9 0%,#2563EB 100%);
+  --shadow:0 4px 16px rgba(14,165,233,.1),0 2px 6px rgba(37,99,235,.06);
+}
+
+/* ── App Shell ── */
+.app{display:flex;height:100vh;overflow:hidden;}
+
+/* ── Sidebar ── */
+.sidebar{
+  width:220px;flex-shrink:0;
+  background:var(--white);
+  border-right:1px solid var(--sky-100);
+  display:flex;flex-direction:column;
+  padding:20px 14px;
+  overflow-y:auto;
+}
+.sidebar-logo{
+  display:flex;align-items:center;gap:9px;
+  padding:8px 10px;margin-bottom:24px;
+}
+.sidebar-icon{
+  width:30px;height:30px;border-radius:8px;
+  background:var(--grad);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 2px 8px rgba(14,165,233,.35);
+  flex-shrink:0;
+}
+.sidebar-icon svg{width:18px;height:18px;}
+.sidebar-brand{font-size:15px;font-weight:800;color:var(--slate-900);}
+.sidebar-brand .dot{color:var(--sky);}
+
+.sidebar-section{font-size:10px;font-weight:700;color:var(--slate-400);
+  text-transform:uppercase;letter-spacing:.07em;
+  padding:0 10px;margin:16px 0 6px;}
+.nav-item{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 10px;border-radius:9px;
+  font-size:13px;font-weight:500;color:var(--slate-600);
+  cursor:pointer;transition:all .15s;margin-bottom:2px;
+}
+.nav-item:hover{background:var(--sky-100);color:var(--sky-d);}
+.nav-item.active{background:var(--sky-100);color:var(--sky-d);font-weight:700;}
+.nav-icon{font-size:16px;width:20px;text-align:center;flex-shrink:0;}
+
+.sidebar-spacer{flex:1;}
+.sidebar-plan{
+  background:linear-gradient(135deg,#E0F2FE,#DBEAFE);
+  border-radius:12px;padding:14px;
+  border:1px solid var(--sky-100);
+}
+.plan-label{font-size:11px;font-weight:700;color:var(--sky-d);margin-bottom:4px;}
+.plan-name{font-size:14px;font-weight:800;color:var(--slate-900);margin-bottom:8px;}
+.plan-bar-bg{height:5px;background:var(--sky-200);border-radius:100px;margin-bottom:6px;}
+.plan-bar{height:5px;background:var(--grad);border-radius:100px;width:60%;}
+.plan-meta{font-size:11px;color:var(--slate-500);}
+.upgrade-btn{
+  display:block;width:100%;margin-top:10px;
+  padding:8px;text-align:center;
+  font-size:12px;font-weight:700;color:var(--white);
+  background:var(--grad);border-radius:8px;border:none;cursor:pointer;
+  box-shadow:0 2px 6px rgba(14,165,233,.35);
+}
+
+/* ── Main ── */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+
+/* Topbar */
+.topbar{
+  background:var(--white);border-bottom:1px solid var(--sky-100);
+  padding:0 28px;height:60px;
+  display:flex;align-items:center;justify-content:space-between;
+  flex-shrink:0;
+}
+.topbar-title{font-size:17px;font-weight:800;color:var(--slate-900);}
+.topbar-right{display:flex;align-items:center;gap:12px;}
+.topbar-search{
+  display:flex;align-items:center;gap:8px;
+  background:var(--sky-bg);border:1px solid var(--sky-100);
+  border-radius:9px;padding:7px 12px;
+  font-size:13px;color:var(--slate-400);
+  width:220px;
+}
+.topbar-search input{
+  border:none;background:transparent;outline:none;
+  font-size:13px;color:var(--slate-700);width:100%;
+  font-family:inherit;
+}
+.topbar-search input::placeholder{color:var(--slate-400);}
+.avatar-btn{
+  width:34px;height:34px;border-radius:50%;
+  background:var(--grad);color:var(--white);
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:700;cursor:pointer;
+  border:2px solid var(--sky-100);
+}
+.notif-btn{
+  width:34px;height:34px;border-radius:50%;
+  background:var(--sky-bg);border:1px solid var(--sky-100);
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;cursor:pointer;
+  position:relative;
+}
+.notif-dot{
+  position:absolute;top:5px;right:5px;
+  width:8px;height:8px;border-radius:50%;
+  background:#EF4444;border:2px solid white;
+}
+
+/* Content area */
+.content{flex:1;overflow-y:auto;padding:28px;}
+
+/* ── Tab panels ── */
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+
+/* ── KPI row ── */
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;}
+.kpi-card{
+  background:var(--white);border-radius:14px;
+  padding:20px 22px;border:1px solid var(--sky-100);
+  transition:all .2s;
+}
+.kpi-card:hover{border-color:var(--sky-200);box-shadow:var(--shadow);}
+.kpi-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.kpi-icon{
+  width:38px;height:38px;border-radius:10px;
+  background:linear-gradient(135deg,#E0F2FE,#DBEAFE);
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;
+}
+.kpi-change{font-size:12px;font-weight:600;padding:3px 8px;border-radius:6px;}
+.kpi-change.up{background:#DCFCE7;color:#16A34A;}
+.kpi-change.sky{background:var(--sky-100);color:var(--sky-d);}
+.kpi-num{font-size:28px;font-weight:900;color:var(--slate-900);margin-bottom:4px;line-height:1;}
+.kpi-label{font-size:13px;color:var(--slate-400);font-weight:500;}
+
+/* ── Creators table ── */
+.section-card{
+  background:var(--white);border-radius:14px;
+  border:1px solid var(--sky-100);overflow:hidden;
+  margin-bottom:20px;
+}
+.section-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:18px 22px;border-bottom:1px solid var(--slate-50);
+}
+.section-head h3{font-size:15px;font-weight:700;color:var(--slate-900);}
+.head-actions{display:flex;gap:8px;}
+.btn-sm{
+  padding:7px 14px;font-size:12px;font-weight:600;
+  border-radius:8px;cursor:pointer;border:none;
+  transition:all .15s;
+}
+.btn-sm-outline{background:var(--sky-bg);color:var(--sky-d);border:1px solid var(--sky-100);}
+.btn-sm-outline:hover{border-color:var(--sky);}
+.btn-sm-primary{background:var(--grad);color:var(--white);box-shadow:0 2px 6px rgba(14,165,233,.3);}
+.btn-sm-primary:hover{box-shadow:0 3px 10px rgba(14,165,233,.4);}
+
+/* Table */
+.table-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;}
+thead th{
+  padding:10px 18px;text-align:left;
+  font-size:11px;font-weight:700;color:var(--slate-400);
+  text-transform:uppercase;letter-spacing:.05em;
+  background:var(--slate-50);border-bottom:1px solid var(--slate-100);
+}
+tbody tr{transition:background .1s;}
+tbody tr:hover{background:var(--sky-bg);}
+tbody td{
+  padding:12px 18px;font-size:13px;
+  color:var(--slate-700);border-bottom:1px solid var(--slate-50);
+  vertical-align:middle;
+}
+tbody tr:last-child td{border-bottom:none;}
+.creator-cell{display:flex;align-items:center;gap:10px;}
+.creator-avatar{
+  width:32px;height:32px;border-radius:50%;
+  background:var(--grad);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  color:white;font-size:11px;font-weight:700;
+}
+.av-purple{background:linear-gradient(135deg,#6366F1,#A78BFA);}
+.av-green{background:linear-gradient(135deg,#10B981,#0EA5E9);}
+.av-orange{background:linear-gradient(135deg,#F59E0B,#EF4444);}
+.av-pink{background:linear-gradient(135deg,#EC4899,#F43F5E);}
+.av-indigo{background:linear-gradient(135deg,#6366F1,#3B82F6);}
+.creator-name{font-weight:700;color:var(--slate-900);font-size:13px;}
+.creator-handle{font-size:11px;color:var(--slate-400);}
+.badge{display:inline-block;padding:2px 8px;border-radius:5px;font-size:11px;font-weight:600;}
+.badge-green{background:#DCFCE7;color:#16A34A;}
+.badge-gray{background:var(--slate-100);color:var(--slate-500);}
+.badge-sky{background:var(--sky-100);color:var(--sky-d);}
+.badge-orange{background:#FEF3C7;color:#D97706;}
+.eng-high{color:#16A34A;font-weight:700;}
+.eng-mid{color:#D97706;font-weight:700;}
+.eng-low{color:#DC2626;font-weight:700;}
+.action-btns{display:flex;gap:6px;}
+.tbl-btn{
+  padding:5px 10px;border-radius:6px;
+  font-size:11px;font-weight:600;cursor:pointer;
+  border:none;transition:all .15s;
+}
+.tbl-btn-sky{background:var(--sky-100);color:var(--sky-d);}
+.tbl-btn-sky:hover{background:var(--sky-200);}
+.tbl-btn-ghost{background:var(--slate-100);color:var(--slate-600);}
+.tbl-btn-ghost:hover{background:var(--slate-200);}
+
+/* ── Filter bar ── */
+.filter-bar{
+  display:flex;align-items:center;gap:10px;
+  padding:14px 22px;background:var(--sky-bg);
+  border-bottom:1px solid var(--sky-100);
+  flex-wrap:wrap;
+}
+.filter-label{font-size:12px;font-weight:600;color:var(--slate-500);margin-right:4px;}
+.filter-chip{
+  padding:5px 12px;border-radius:100px;
+  font-size:12px;font-weight:600;cursor:pointer;
+  border:1px solid var(--sky-100);background:var(--white);
+  color:var(--slate-600);transition:all .15s;
+}
+.filter-chip.on{background:var(--sky-d);color:white;border-color:var(--sky-d);}
+.filter-chip:hover:not(.on){border-color:var(--sky);color:var(--sky-d);}
+
+/* ── Email templates tab ── */
+.templates-grid{display:grid;grid-template-columns:260px 1fr;gap:20px;min-height:500px;}
+.templates-list-card{
+  background:var(--white);border-radius:14px;
+  border:1px solid var(--sky-100);overflow:hidden;
+}
+.tmpl-header{
+  padding:16px 18px;border-bottom:1px solid var(--sky-100);
+  font-size:14px;font-weight:700;color:var(--slate-900);
+}
+.tmpl-item{
+  padding:14px 18px;cursor:pointer;
+  border-bottom:1px solid var(--slate-50);
+  transition:background .15s;
+}
+.tmpl-item:last-child{border-bottom:none;}
+.tmpl-item:hover{background:var(--sky-bg);}
+.tmpl-item.active{background:var(--sky-100);}
+.tmpl-item-emoji{font-size:18px;margin-bottom:4px;}
+.tmpl-item-title{font-size:13px;font-weight:700;color:var(--slate-900);margin-bottom:2px;}
+.tmpl-item-desc{font-size:12px;color:var(--slate-400);}
+.template-editor{
+  background:var(--white);border-radius:14px;
+  border:1px solid var(--sky-100);overflow:hidden;
+  display:flex;flex-direction:column;
+}
+.editor-header{
+  padding:16px 22px;border-bottom:1px solid var(--sky-100);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.editor-header h3{font-size:15px;font-weight:700;}
+.editor-meta{display:flex;gap:8px;}
+.editor-body{padding:24px;flex:1;}
+.form-row{margin-bottom:20px;}
+.form-label{font-size:12px;font-weight:700;color:var(--slate-500);
+  text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px;}
+.form-input{
+  width:100%;padding:10px 14px;
+  border:1.5px solid var(--sky-100);border-radius:9px;
+  font-size:14px;font-family:inherit;color:var(--slate-900);
+  background:var(--sky-bg);outline:none;transition:border-color .15s;
+}
+.form-input:focus{border-color:var(--sky);}
+.form-textarea{
+  width:100%;min-height:200px;padding:14px;
+  border:1.5px solid var(--sky-100);border-radius:9px;
+  font-size:14px;font-family:inherit;color:var(--slate-700);
+  background:var(--sky-bg);outline:none;resize:vertical;
+  line-height:1.7;transition:border-color .15s;
+}
+.form-textarea:focus{border-color:var(--sky);}
+.placeholder-tip{
+  display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;
+}
+.placeholder-tag{
+  padding:4px 10px;border-radius:6px;
+  font-size:12px;font-weight:600;cursor:pointer;
+  background:var(--sky-100);color:var(--sky-d);
+  transition:all .15s;
+}
+.placeholder-tag:hover{background:var(--sky-200);}
+.editor-footer{
+  padding:16px 22px;border-top:1px solid var(--sky-100);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.editor-footer-left{font-size:12px;color:var(--slate-400);}
+
+/* ── Upload CSV section ── */
+.upload-area{
+  border:2px dashed var(--sky-200);border-radius:16px;
+  padding:48px;text-align:center;
+  background:var(--sky-bg);cursor:pointer;
+  transition:all .2s;
+}
+.upload-area:hover{border-color:var(--sky);background:#E0F2FE;}
+.upload-icon{font-size:48px;margin-bottom:12px;}
+.upload-title{font-size:17px;font-weight:700;margin-bottom:6px;}
+.upload-desc{font-size:14px;color:var(--slate-500);}
+.upload-btn{
+  display:inline-block;margin-top:20px;
+  padding:10px 24px;font-size:14px;font-weight:700;
+  background:var(--grad);color:white;border-radius:10px;
+  box-shadow:0 2px 8px rgba(14,165,233,.35);
+}
+
+/* ── Plan/billing tab ── */
+.billing-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.plan-card{
+  background:var(--white);border-radius:14px;
+  border:2px solid var(--sky);padding:28px;
+}
+.plan-card-title{font-size:13px;font-weight:700;color:var(--sky-d);margin-bottom:4px;}
+.plan-card-name{font-size:28px;font-weight:900;margin-bottom:4px;}
+.plan-card-price{font-size:15px;color:var(--slate-400);margin-bottom:20px;}
+.plan-features-list{list-style:none;margin-bottom:24px;}
+.plan-features-list li{
+  display:flex;align-items:center;gap:8px;
+  font-size:14px;padding:6px 0;
+  border-bottom:1px solid var(--slate-50);
+}
+.plan-features-list li:last-child{border-bottom:none;}
+.pf-check{color:var(--sky-d);}
+.usage-card{
+  background:var(--white);border-radius:14px;
+  border:1px solid var(--sky-100);padding:28px;
+}
+.usage-item{margin-bottom:22px;}
+.usage-row{display:flex;justify-content:space-between;margin-bottom:6px;}
+.usage-name{font-size:14px;font-weight:600;}
+.usage-count{font-size:13px;color:var(--slate-400);}
+.usage-bar-bg{height:7px;background:var(--sky-100);border-radius:100px;}
+.usage-bar{height:7px;border-radius:100px;background:var(--grad);}
+.invoice-table{margin-top:8px;}
+.invoice-row{
+  display:flex;justify-content:space-between;
+  padding:10px 0;border-bottom:1px solid var(--slate-50);
+  font-size:13px;
+}
+.invoice-row:last-child{border-bottom:none;}
+.inv-date{color:var(--slate-400);}
+.inv-amount{font-weight:700;}
+.inv-badge{
+  font-size:11px;font-weight:600;padding:2px 8px;border-radius:5px;
+  background:#DCFCE7;color:#16A34A;
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ── Sidebar ── -->
+  <div class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-icon">
+        <svg viewBox="0 0 20 20" fill="none">
+          <circle cx="10" cy="8" r="2" fill="white"/>
+          <path d="M6 6 Q3 8 6 10" stroke="white" stroke-width="2" stroke-linecap="round" fill="none"/>
+          <path d="M14 6 Q17 8 14 10" stroke="white" stroke-width="2" stroke-linecap="round" fill="none"/>
+          <path d="M4 3.5 Q-1 8 4 12.5" stroke="white" stroke-width="1.4" stroke-linecap="round" fill="none" opacity=".6"/>
+          <path d="M16 3.5 Q21 8 16 12.5" stroke="white" stroke-width="1.4" stroke-linecap="round" fill="none" opacity=".6"/>
+          <line x1="10" y1="10" x2="10" y2="16" stroke="white" stroke-width="2" stroke-linecap="round"/>
+          <path d="M7 16 Q10 14.5 13 16" stroke="white" stroke-width="1.4" stroke-linecap="round" fill="none"/>
+        </svg>
+      </div>
+      <div class="sidebar-brand">InfluTree<span class="dot">.ai</span></div>
+    </div>
+
+    <div class="sidebar-section">Main</div>
+    <div class="nav-item active" data-tab="overview">
+      <span class="nav-icon">📊</span> Overview
+    </div>
+    <div class="nav-item" data-tab="creators">
+      <span class="nav-icon">👥</span> Creators
+    </div>
+    <div class="nav-item" data-tab="templates">
+      <span class="nav-icon">📧</span> Email Templates
+    </div>
+    <div class="nav-item" data-tab="export">
+      <span class="nav-icon">📥</span> Export Data
+    </div>
+
+    <div class="sidebar-section">Account</div>
+    <div class="nav-item" data-tab="billing">
+      <span class="nav-icon">💳</span> Plan & Billing
+    </div>
+    <div class="nav-item">
+      <span class="nav-icon">⚙️</span> Settings
+    </div>
+
+    <div class="sidebar-spacer"></div>
+    <div class="sidebar-plan">
+      <div class="plan-label">Current Plan</div>
+      <div class="plan-name">Free</div>
+      <div class="plan-bar-bg"><div class="plan-bar"></div></div>
+      <div class="plan-meta">12 / 20 creators used this month</div>
+      <button class="upgrade-btn" data-tab="billing" onclick="switchTab('billing')">⚡ Upgrade to Pro</button>
+    </div>
+  </div>
+
+  <!-- ── Main ── -->
+  <div class="main">
+    <!-- Topbar -->
+    <div class="topbar">
+      <div class="topbar-title" id="topbar-title">Overview</div>
+      <div class="topbar-right">
+        <div class="topbar-search">
+          <span>🔍</span>
+          <input type="text" placeholder="Search creators…" />
+        </div>
+        <div class="notif-btn">🔔<div class="notif-dot"></div></div>
+        <div class="avatar-btn" id="user-avatar" title="Sign out" onclick="handleLogout()" style="cursor:pointer;">J</div>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+
+      <!-- ── Overview tab ── -->
+      <div class="tab-panel active" id="tab-overview">
+        <div class="kpi-row">
+          <div class="kpi-card">
+            <div class="kpi-top">
+              <div class="kpi-icon">👥</div>
+              <span class="kpi-change up">↑ +12</span>
+            </div>
+            <div class="kpi-num">147</div>
+            <div class="kpi-label">Saved Creators</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-top">
+              <div class="kpi-icon">📊</div>
+              <span class="kpi-change sky">↑ Good</span>
+            </div>
+            <div class="kpi-num">6.4%</div>
+            <div class="kpi-label">Avg Engagement Rate</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-top">
+              <div class="kpi-icon">📧</div>
+              <span class="kpi-change up">89 found</span>
+            </div>
+            <div class="kpi-num">61%</div>
+            <div class="kpi-label">Email Discovery Rate</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-top">
+              <div class="kpi-icon">🌍</div>
+              <span class="kpi-change sky">23 countries</span>
+            </div>
+            <div class="kpi-num">8.2M</div>
+            <div class="kpi-label">Total Reach</div>
+          </div>
+        </div>
+
+        <!-- Recent creators table -->
+        <div class="section-card">
+          <div class="section-head">
+            <h3>Recent Creators</h3>
+            <div class="head-actions">
+              <button class="btn-sm btn-sm-outline" onclick="switchTab('creators')">View All</button>
+              <button class="btn-sm btn-sm-primary" onclick="switchTab('export')">↓ Export CSV</button>
+            </div>
+          </div>
+          <div class="filter-bar">
+            <span class="filter-label">Country:</span>
+            <span class="filter-chip on">All</span>
+            <span class="filter-chip">🇰🇷 South Korea</span>
+            <span class="filter-chip">🇯🇵 Japan</span>
+            <span class="filter-chip">🇺🇸 United States</span>
+            <span class="filter-chip">🇨🇳 China</span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Creator</th>
+                  <th>Followers</th>
+                  <th>Eng. Rate</th>
+                  <th>Avg Views</th>
+                  <th>Email</th>
+                  <th>Country</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><div class="creator-cell"><div class="creator-avatar">T</div><div><div class="creator-name">tuisy.design</div><div class="creator-handle">@tuisy.design</div></div></div></td>
+                  <td>182.3K</td><td><span class="eng-high">6.8%</span></td><td>48K</td>
+                  <td><span class="badge badge-green">✓ Found</span></td>
+                  <td>South Korea</td>
+                  <td><div class="action-btns"><button class="tbl-btn tbl-btn-sky">Email</button><button class="tbl-btn tbl-btn-ghost">View</button></div></td>
+                </tr>
+                <tr>
+                  <td><div class="creator-cell"><div class="creator-avatar av-purple">A</div><div><div class="creator-name">aasvogel.kr</div><div class="creator-handle">@aasvogel.kr</div></div></div></td>
+                  <td>53.5K</td><td><span class="eng-high">15.3%</span></td><td>22K</td>
+                  <td><span class="badge badge-green">✓ Found</span></td>
+                  <td>South Korea</td>
+                  <td><div class="action-btns"><button class="tbl-btn tbl-btn-sky">Email</button><button class="tbl-btn tbl-btn-ghost">View</button></div></td>
+                </tr>
+                <tr>
+                  <td><div class="creator-cell"><div class="creator-avatar av-green">1</div><div><div class="creator-name">1.min.design</div><div class="creator-handle">@1.min.design</div></div></div></td>
+                  <td>12.6K</td><td><span class="eng-high">18.1%</span></td><td>9K</td>
+                  <td><span class="badge badge-green">✓ Found</span></td>
+                  <td>South Korea</td>
+                  <td><div class="action-btns"><button class="tbl-btn tbl-btn-sky">Email</button><button class="tbl-btn tbl-btn-ghost">View</button></div></td>
+                </tr>
+                <tr>
+                  <td><div class="creator-cell"><div class="creator-avatar av-orange">K</div><div><div class="creator-name">kim.dobe</div><div class="creator-handle">@kim.dobe</div></div></div></td>
+                  <td>8.6K</td><td><span class="eng-mid">4.2%</span></td><td>3.1K</td>
+                  <td><span class="badge badge-gray">— Not found</span></td>
+                  <td>South Korea</td>
+                  <td><div class="action-btns"><button class="tbl-btn tbl-btn-ghost">Scan</button><button class="tbl-btn tbl-btn-ghost">View</button></div></td>
+                </tr>
+                <tr>
+                  <td><div class="creator-cell"><div class="creator-avatar av-pink">J</div><div><div class="creator-name">j.ux_studio</div><div class="creator-handle">@j.ux_studio</div></div></div></td>
+                  <td>24.1K</td><td><span class="eng-high">9.7%</span></td><td>14K</td>
+                  <td><span class="badge badge-green">✓ Found</span></td>
+                  <td>Japan</td>
+                  <td><div class="action-btns"><button class="tbl-btn tbl-btn-sky">Email</button><button class="tbl-btn tbl-btn-ghost">View</button></div></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div><!-- /overview -->
+
+      <!-- ── Creators tab ── -->
+      <div class="tab-panel" id="tab-creators">
+        <div class="section-card">
+          <div class="section-head">
+            <h3>All Creators (147)</h3>
+            <div class="head-actions">
+              <button class="btn-sm btn-sm-outline">🔍 Filter</button>
+              <button class="btn-sm btn-sm-primary" onclick="switchTab('export')">↓ Export CSV</button>
+            </div>
+          </div>
+          <div class="filter-bar">
+            <span class="filter-label">Eng. Rate:</span>
+            <span class="filter-chip on">All</span>
+            <span class="filter-chip">&gt;5% High</span>
+            <span class="filter-chip">3–5% Mid</span>
+            <span class="filter-chip">&lt;3% Low</span>
+            <span class="filter-label" style="margin-left:12px">Email:</span>
+            <span class="filter-chip">Found only</span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Creator</th><th>Followers</th><th>Eng. Rate</th>
+                  <th>Avg Views</th><th>Email</th><th>Country</th><th>Saved</th><th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><div class="creator-cell"><div class="creator-avatar">T</div><div><div class="creator-name">tuisy.design</div><div class="creator-handle">@tuisy.design</div></div></div></td>
+                  <td>182.3K</td><td><span class="eng-high">6.8%</span></td><td>48K</td>
+                  <td><span class="badge badge-green">✓</span></td><td>South Korea</td><td style="color:#94A3B8;font-size:12px">Jun 3</td>
+                  <td><div class="action-btns"><button class="tbl-btn tbl-btn-sky">Email</button><button class="tbl-btn tbl-btn-ghost">✕</button></div></td>
+                </tr>
+                <tr>
+                  <td><div class="creator-cell"><div class="creator-avatar av-purple">A</div><div><div class="creator-name">aasvogel.kr</div><div class="creator-handle">@aasvogel.kr</div></div></div></td>
+                  <td>53.5K</td><td><span class="eng-high">15.3%</span></td><td>22K</td>
+                  <td><span class="badge badge-green">✓</span></td><td>South Korea</td><td style="color:#94A3B8;font-size:12px">Jun 3</td>
+                  <td><div class="action-btns"><button class="tbl-btn tbl-btn-sky">Email</button><button class="tbl-btn tbl-btn-ghost">✕</button></div></td>
+                </tr>
+                <tr>
+                  <td><div class="creator-cell"><div class="creator-avatar av-green">1</div><div><div class="creator-name">1.min.design</div><div class="creator-handle">@1.min.design</div></div></div></td>
+                  <td>12.6K</td><td><span class="eng-high">18.1%</span></td><td>9K</td>
+                  <td><span class="badge badge-green">✓</span></td><td>South Korea</td><td style="color:#94A3B8;font-size:12px">Jun 2</td>
+                  <td><div class="action-btns"><button class="tbl-btn tbl-btn-sky">Email</button><button class="tbl-btn tbl-btn-ghost">✕</button></div></td>
+                </tr>
+                <tr>
+                  <td><div class="creator-cell"><div class="creator-avatar av-orange">K</div><div><div class="creator-name">kim.dobe</div><div class="creator-handle">@kim.dobe</div></div></div></td>
+                  <td>8.6K</td><td><span class="eng-mid">4.2%</span></td><td>3.1K</td>
+                  <td><span class="badge badge-gray">—</span></td><td>South Korea</td><td style="color:#94A3B8;font-size:12px">Jun 2</td>
+                  <td><div class="action-btns"><button class="tbl-btn tbl-btn-ghost">Scan</button><button class="tbl-btn tbl-btn-ghost">✕</button></div></td>
+                </tr>
+                <tr>
+                  <td><div class="creator-cell"><div class="creator-avatar av-pink">J</div><div><div class="creator-name">j.ux_studio</div><div class="creator-handle">@j.ux_studio</div></div></div></td>
+                  <td>24.1K</td><td><span class="eng-high">9.7%</span></td><td>14K</td>
+                  <td><span class="badge badge-green">✓</span></td><td>Japan</td><td style="color:#94A3B8;font-size:12px">Jun 1</td>
+                  <td><div class="action-btns"><button class="tbl-btn tbl-btn-sky">Email</button><button class="tbl-btn tbl-btn-ghost">✕</button></div></td>
+                </tr>
+                <tr>
+                  <td><div class="creator-cell"><div class="creator-avatar av-indigo">M</div><div><div class="creator-name">midori.ux</div><div class="creator-handle">@midori.ux</div></div></div></td>
+                  <td>41.2K</td><td><span class="eng-high">7.1%</span></td><td>28K</td>
+                  <td><span class="badge badge-green">✓</span></td><td>Japan</td><td style="color:#94A3B8;font-size:12px">Jun 1</td>
+                  <td><div class="action-btns"><button class="tbl-btn tbl-btn-sky">Email</button><button class="tbl-btn tbl-btn-ghost">✕</button></div></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div><!-- /creators -->
+
+      <!-- ── Email Templates tab ── -->
+      <div class="tab-panel" id="tab-templates">
+        <div class="templates-grid">
+          <div class="templates-list-card">
+            <div class="tmpl-header">📧 My Templates</div>
+            <div class="tmpl-item active" onclick="selectTemplate(this,'collab')">
+              <div class="tmpl-item-emoji">💼</div>
+              <div class="tmpl-item-title">Brand Collaboration</div>
+              <div class="tmpl-item-desc">Paid partnership proposal</div>
+            </div>
+            <div class="tmpl-item" onclick="selectTemplate(this,'gifting')">
+              <div class="tmpl-item-emoji">🎁</div>
+              <div class="tmpl-item-title">Product Gifting</div>
+              <div class="tmpl-item-desc">Free product for review</div>
+            </div>
+            <div class="tmpl-item" onclick="selectTemplate(this,'ambassador')">
+              <div class="tmpl-item-emoji">🤝</div>
+              <div class="tmpl-item-title">Long-term Ambassador</div>
+              <div class="tmpl-item-desc">Ongoing partnership</div>
+            </div>
+            <div class="tmpl-item" onclick="selectTemplate(this,'event')">
+              <div class="tmpl-item-emoji">📅</div>
+              <div class="tmpl-item-title">Event Invitation</div>
+              <div class="tmpl-item-desc">Launch or exclusive event</div>
+            </div>
+          </div>
+          <div class="template-editor">
+            <div class="editor-header">
+              <h3 id="tmpl-editor-title">💼 Brand Collaboration</h3>
+              <div class="editor-meta">
+                <button class="btn-sm btn-sm-outline">Reset</button>
+                <button class="btn-sm btn-sm-primary" id="copy-tmpl-btn">Copy Email</button>
+              </div>
+            </div>
+            <div class="editor-body">
+              <div class="form-row">
+                <div class="form-label">Subject Line</div>
+                <input class="form-input" id="tmpl-subject" value="Collaboration opportunity with {{brand}}" />
+              </div>
+              <div class="form-row">
+                <div class="form-label">Email Body</div>
+                <textarea class="form-textarea" id="tmpl-body">Hi {{name}},
+
+I've been following your work in {{niche}} and love your content — your authenticity really stands out.
+
+I'm reaching out on behalf of {{brand}}. We'd love to explore a paid collaboration that your audience would genuinely enjoy.
+
+Would you be open to a quick chat?
+
+Best regards,
+{{sender}}</textarea>
+                <div class="placeholder-tip">
+                  <span class="placeholder-tag" onclick="insertTag('{{name}}')">{{name}}</span>
+                  <span class="placeholder-tag" onclick="insertTag('{{brand}}')">{{brand}}</span>
+                  <span class="placeholder-tag" onclick="insertTag('{{niche}}')">{{niche}}</span>
+                  <span class="placeholder-tag" onclick="insertTag('{{followers}}')">{{followers}}</span>
+                  <span class="placeholder-tag" onclick="insertTag('{{sender}}')">{{sender}}</span>
+                </div>
+              </div>
+            </div>
+            <div class="editor-footer">
+              <span class="editor-footer-left">Placeholders are auto-filled from creator data</span>
+              <button class="btn-sm btn-sm-primary" id="save-tmpl-btn">Save Template</button>
+            </div>
+          </div>
+        </div>
+      </div><!-- /templates -->
+
+      <!-- ── Export tab ── -->
+      <div class="tab-panel" id="tab-export">
+        <div class="section-card" style="margin-bottom:20px">
+          <div class="section-head">
+            <h3>Export Options</h3>
+          </div>
+          <div style="padding:24px">
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px">
+              <div style="background:var(--sky-bg);border:1.5px solid var(--sky-100);border-radius:12px;padding:20px;cursor:pointer;transition:all .2s" class="export-opt active-opt">
+                <div style="font-size:28px;margin-bottom:8px">📊</div>
+                <div style="font-weight:700;margin-bottom:4px">CSV Spreadsheet</div>
+                <div style="font-size:13px;color:var(--slate-400)">Includes all fields. Open in Excel or Google Sheets.</div>
+              </div>
+              <div style="background:var(--sky-bg);border:1.5px solid var(--sky-100);border-radius:12px;padding:20px;cursor:pointer;opacity:.6">
+                <div style="font-size:28px;margin-bottom:8px">📋</div>
+                <div style="font-weight:700;margin-bottom:4px">Copy Emails</div>
+                <div style="font-size:13px;color:var(--slate-400)">Copy all found emails to clipboard.</div>
+              </div>
+              <div style="background:var(--sky-bg);border:1.5px solid var(--sky-100);border-radius:12px;padding:20px;cursor:pointer;opacity:.6">
+                <div style="font-size:28px;margin-bottom:8px">🔗</div>
+                <div style="font-weight:700;margin-bottom:4px">Share Link</div>
+                <div style="font-size:13px;color:var(--slate-400)">Create a shareable read-only link. <span style="color:var(--sky-d)">Pro</span></div>
+              </div>
+            </div>
+            <div style="background:var(--sky-bg);border-radius:12px;padding:20px;border:1px solid var(--sky-100);margin-bottom:20px">
+              <div style="font-weight:700;font-size:14px;margin-bottom:12px">Include fields:</div>
+              <div style="display:flex;flex-wrap:wrap;gap:8px">
+                <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="checkbox" checked /> Username</label>
+                <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="checkbox" checked /> Full Name</label>
+                <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="checkbox" checked /> Followers</label>
+                <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="checkbox" checked /> Eng. Rate</label>
+                <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="checkbox" checked /> Email</label>
+                <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="checkbox" checked /> Country</label>
+                <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="checkbox" /> Avg Views</label>
+                <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="checkbox" /> Profile URL</label>
+              </div>
+            </div>
+            <button class="btn-sm btn-sm-primary" style="padding:12px 28px;font-size:14px" id="export-btn">↓ Export 147 Creators as CSV</button>
+          </div>
+        </div>
+
+        <div class="section-card">
+          <div class="section-head"><h3>Import from Extension CSV</h3></div>
+          <div style="padding:24px">
+            <div class="upload-area" id="upload-drop">
+              <div class="upload-icon">📂</div>
+              <div class="upload-title">Drop your InfluTree CSV here</div>
+              <div class="upload-desc">Or click to browse. Accepts the CSV file exported from the Chrome extension.</div>
+              <label class="upload-btn" style="cursor:pointer">
+                Choose File
+                <input type="file" accept=".csv" style="display:none" id="csv-file-input" />
+              </label>
+            </div>
+          </div>
+        </div>
+      </div><!-- /export -->
+
+      <!-- ── Plan & Billing tab ── -->
+      <div class="tab-panel" id="tab-billing">
+        <div class="billing-grid" style="margin-bottom:20px">
+          <div class="plan-card">
+            <div class="plan-card-title">Current Plan</div>
+            <div class="plan-card-name">Free</div>
+            <div class="plan-card-price">$0 / month</div>
+            <ul class="plan-features-list">
+              <li><span class="pf-check">✓</span> Chrome extension</li>
+              <li><span class="pf-check">✓</span> 20 creator profiles / month</li>
+              <li><span class="pf-check">✓</span> 3 CSV exports / month</li>
+              <li style="color:#94A3B8"><span>✗</span> Email auto-discovery</li>
+              <li style="color:#94A3B8"><span>✗</span> Web dashboard</li>
+            </ul>
+            <a href="https://buy.stripe.com/YOUR_PRO_LINK" class="btn-sm btn-sm-primary" style="display:block;text-align:center;padding:12px;font-size:14px">⚡ Upgrade to Pro — $19/mo</a>
+          </div>
+          <div class="usage-card">
+            <div style="font-weight:700;font-size:15px;margin-bottom:20px">This Month's Usage</div>
+            <div class="usage-item">
+              <div class="usage-row"><span class="usage-name">Creator Profiles</span><span class="usage-count">12 / 20</span></div>
+              <div class="usage-bar-bg"><div class="usage-bar" style="width:60%"></div></div>
+            </div>
+            <div class="usage-item">
+              <div class="usage-row"><span class="usage-name">CSV Exports</span><span class="usage-count">2 / 3</span></div>
+              <div class="usage-bar-bg"><div class="usage-bar" style="width:67%"></div></div>
+            </div>
+            <div class="usage-item">
+              <div class="usage-row"><span class="usage-name">Email Scans</span><span class="usage-count">— (Pro only)</span></div>
+              <div class="usage-bar-bg"><div class="usage-bar" style="width:0%;background:#E2E8F0"></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="section-card">
+          <div class="section-head"><h3>Billing History</h3></div>
+          <div style="padding:0 22px">
+            <div class="invoice-row">
+              <span class="inv-date">—</span>
+              <span>No billing history yet · Free plan</span>
+              <span class="inv-badge">Free</span>
+            </div>
+          </div>
+        </div>
+      </div><!-- /billing -->
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+// ── Supabase Auth ──
+const { createClient } = supabase
+const sb = createClient(
+  'https://fxzffwqhzybrrsgiajyc.supabase.co',
+  'sb_publishable_NiFVL8pxuUhwEDUsym1TDA_NPFmqqED'
+)
+
+// 检查登录状态，未登录跳转
+sb.auth.getSession().then(({ data }) => {
+  if (!data.session) {
+    location.href = 'login.html'
+    return
+  }
+  // 显示用户头像首字母
+  const email = data.session.user.email || ''
+  const initial = email[0]?.toUpperCase() || 'U'
+  const avatarEl = document.getElementById('user-avatar')
+  if (avatarEl) avatarEl.textContent = initial
+  // 显示邮箱
+  const emailEl = document.getElementById('user-email')
+  if (emailEl) emailEl.textContent = email
+})
+
+async function handleLogout() {
+  await sb.auth.signOut()
+  location.href = 'login.html'
+}
+
+const tabTitles = {
+  overview:'Overview', creators:'Creators',
+  templates:'Email Templates', export:'Export Data', billing:'Plan & Billing'
+};
+
+function switchTab(name) {
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item[data-tab]').forEach(n=>n.classList.remove('active'));
+  const panel = document.getElementById('tab-'+name);
+  if(panel) panel.classList.add('active');
+  const navItem = document.querySelector(`.nav-item[data-tab="${name}"]`);
+  if(navItem) navItem.classList.add('active');
+  document.getElementById('topbar-title').textContent = tabTitles[name] || name;
+}
+
+document.querySelectorAll('.nav-item[data-tab]').forEach(item=>{
+  item.addEventListener('click',()=>switchTab(item.dataset.tab));
+});
+
+// Email template switcher
+const templates = {
+  collab:{
+    title:'💼 Brand Collaboration',
+    subject:'Collaboration opportunity with {{brand}}',
+    body:`Hi {{name}},\n\nI've been following your work in {{niche}} and love your content — your authenticity really stands out.\n\nI'm reaching out on behalf of {{brand}}. We'd love to explore a paid collaboration that your audience would genuinely enjoy.\n\nWould you be open to a quick chat?\n\nBest regards,\n{{sender}}`
+  },
+  gifting:{
+    title:'🎁 Product Gifting',
+    subject:'A gift for you from {{brand}}',
+    body:`Hi {{name}},\n\nWe're big fans of your content in {{niche}} — your genuine style is exactly what we look for.\n\nWe'd love to send you our latest product as a gift, with no strings attached — just an honest review if you love it.\n\nInterested? Just reply and we'll handle the rest.\n\nBest,\n{{sender}}`
+  },
+  ambassador:{
+    title:'🤝 Long-term Ambassador',
+    subject:'Long-term partnership opportunity — {{brand}}',
+    body:`Hi {{name}},\n\nWe've been following your growth in {{niche}} and we're genuinely impressed by your community and engagement.\n\nWe're looking for a long-term brand ambassador — someone who can authentically represent {{brand}} to their audience. We believe you'd be a perfect fit.\n\nThis would include monthly content, exclusive products, and a commission structure. Would you be interested in discussing this?\n\nBest,\n{{sender}}`
+  },
+  event:{
+    title:'📅 Event Invitation',
+    subject:'You\'re invited — exclusive {{brand}} event',
+    body:`Hi {{name}},\n\nWe're hosting an exclusive launch event for {{brand}} and would love for you to join us.\n\nDetails: [Date, Location]\n\nAs someone who resonates with our brand in {{niche}}, you'd be a perfect fit for the evening. We'd cover travel and accommodation.\n\nCan we count you in?\n\nBest,\n{{sender}}`
+  }
+};
+
+function selectTemplate(el, key) {
+  document.querySelectorAll('.tmpl-item').forEach(i=>i.classList.remove('active'));
+  el.classList.add('active');
+  const t = templates[key];
+  document.getElementById('tmpl-editor-title').textContent = t.title;
+  document.getElementById('tmpl-subject').value = t.subject;
+  document.getElementById('tmpl-body').value = t.body;
+}
+
+function insertTag(tag) {
+  const ta = document.getElementById('tmpl-body');
+  const start=ta.selectionStart, end=ta.selectionEnd;
+  ta.value = ta.value.slice(0,start)+tag+ta.value.slice(end);
+  ta.selectionStart = ta.selectionEnd = start+tag.length;
+  ta.focus();
+}
+
+document.getElementById('copy-tmpl-btn')?.addEventListener('click',function(){
+  const s=document.getElementById('tmpl-subject').value;
+  const b=document.getElementById('tmpl-body').value;
+  navigator.clipboard.writeText('Subject: '+s+'\n\n'+b).then(()=>{
+    this.textContent='✓ Copied!'; this.style.background='#16A34A';
+    setTimeout(()=>{this.textContent='Copy Email';this.style.background='';},2000);
+  });
+});
+
+document.getElementById('save-tmpl-btn')?.addEventListener('click',function(){
+  this.textContent='✓ Saved!';
+  setTimeout(()=>{this.textContent='Save Template';},2000);
+});
+
+// CSV export simulation
+document.getElementById('export-btn')?.addEventListener('click',function(){
+  const header = 'Username,Full Name,Followers,Eng. Rate (%),Email,Country\n';
+  const rows = [
+    '"tuisy.design","Tuisy","182300","6.8","hello@tuisy.kr","South Korea"',
+    '"aasvogel.kr","Aaliya","53500","15.3","","South Korea"',
+    '"1.min.design","One Min","12600","18.1","ddftpoi0429@gmail.com","South Korea"',
+    '"kim.dobe","Kim Dobe","8600","4.2","","South Korea"',
+    '"j.ux_studio","J Studio","24100","9.7","j.studio@mail.jp","Japan"',
+  ].join('\n');
+  const blob = new Blob(['﻿'+header+rows],{type:'text/csv'});
+  Object.assign(document.createElement('a'),{
+    href:URL.createObjectURL(blob),
+    download:`influtree-export-${new Date().toISOString().split('T')[0]}.csv`
+  }).click();
+  this.textContent='✓ Downloaded!';
+  setTimeout(()=>{this.textContent='↓ Export 147 Creators as CSV';},2500);
+});
+
+// CSV file upload feedback
+document.getElementById('csv-file-input')?.addEventListener('change',function(){
+  if(this.files[0]){
+    document.getElementById('upload-drop').innerHTML=`
+      <div class="upload-icon">✅</div>
+      <div class="upload-title">${this.files[0].name} uploaded!</div>
+      <div class="upload-desc">Processing creator data… (feature coming soon)</div>`;
+  }
+});
+</script>
+</body>
+</html>
