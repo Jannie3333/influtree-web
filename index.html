@@ -783,55 +783,52 @@ section{padding:96px 0;}
       <div class="p-card">
         <div class="p-tier">Starter</div>
         <div class="p-price"><span class="p-curr">$</span><span class="p-amount">0</span><span class="p-period">/mo</span></div>
-        <p class="p-desc">Perfect for trying out InfluTree on a one-off campaign.</p>
+        <p class="p-desc">Try InfluTree for free. No credit card needed.</p>
         <div class="p-div"></div>
         <ul class="p-feats">
-          <li><span class="p-check">✓</span>Chrome extension (full)</li>
-          <li><span class="p-check">✓</span>20 creator profiles / month</li>
+          <li><span class="p-check">✓</span>Chrome extension (full access)</li>
+          <li><span class="p-check">✓</span>50 creator saves / month</li>
           <li><span class="p-check">✓</span>3 CSV exports / month</li>
-          <li><span class="p-check">✓</span>Basic engagement analytics</li>
+          <li><span class="p-check">✓</span>Engagement rate & country detection</li>
           <li><span class="p-x">✗</span><span>Email auto-discovery</span></li>
           <li><span class="p-x">✗</span><span>Web dashboard</span></li>
-          <li><span class="p-x">✗</span><span>Email templates</span></li>
+          <li><span class="p-x">✗</span><span>Similar creator tree (2 levels)</span></li>
         </ul>
-        <a href="https://chrome.google.com/webstore" class="btn-p-outline">Install for Free</a>
+        <a href="register.html" class="btn-p-outline">Get Started Free</a>
       </div>
       <!-- Pro -->
       <div class="p-card p-pop">
         <div class="p-badge">⚡ Most Popular</div>
         <div class="p-tier">Pro</div>
-        <div class="p-price"><span class="p-curr">$</span><span class="p-amount" id="pro-price">19</span><span class="p-period">/mo</span></div>
-        <p class="p-desc">For marketers running ongoing campaigns who need unlimited data.</p>
+        <div class="p-price"><span class="p-curr">$</span><span class="p-amount" id="pro-price">12</span><span class="p-period">/mo</span></div>
+        <p class="p-desc">For marketers who need unlimited Instagram discovery and email outreach.</p>
         <div class="p-div"></div>
         <ul class="p-feats">
-          <li><span class="p-check">✓</span><strong>Unlimited</strong> creator profiles</li>
+          <li><span class="p-check">✓</span><strong>Unlimited</strong> creator saves</li>
           <li><span class="p-check">✓</span><strong>Unlimited</strong> CSV exports</li>
-          <li><span class="p-check">✓</span>Email auto-discovery</li>
+          <li><span class="p-check">✓</span>Email auto-discovery (bio links)</li>
+          <li><span class="p-check">✓</span>Similar creator tree (2 levels deep)</li>
           <li><span class="p-check">✓</span>Web dashboard</li>
-          <li><span class="p-check">✓</span>Email templates (4 types)</li>
-          <li><span class="p-check">✓</span>Country & niche detection</li>
-          <li><span class="p-check">✓</span>Priority support</li>
+          <li><span class="p-check">✓</span>Country & engagement filters</li>
+          <li><span class="p-check">✓</span>Email support</li>
         </ul>
-        <!-- 👇 Replace with your Stripe Payment Link -->
-        <a href="https://buy.stripe.com/YOUR_PRO_LINK" class="btn-p-fill" id="pro-btn">Start Pro — $19/mo</a>
+        <a href="https://buy.stripe.com/YOUR_PRO_LINK" class="btn-p-fill" id="pro-btn">Start Pro — $12/mo</a>
       </div>
       <!-- Agency -->
       <div class="p-card">
         <div class="p-tier">Agency</div>
-        <div class="p-price"><span class="p-curr">$</span><span class="p-amount" id="agency-price">49</span><span class="p-period">/mo</span></div>
-        <p class="p-desc">For agencies managing multiple brands and creator rosters.</p>
+        <div class="p-price"><span class="p-curr">$</span><span class="p-amount" id="agency-price">29</span><span class="p-period">/mo</span></div>
+        <p class="p-desc">For teams and agencies managing multiple brand campaigns.</p>
         <div class="p-div"></div>
         <ul class="p-feats">
           <li><span class="p-check">✓</span>Everything in Pro</li>
-          <li><span class="p-check">✓</span>5 team seats</li>
+          <li><span class="p-check">✓</span>3 team seats</li>
           <li><span class="p-check">✓</span>Shared creator collections</li>
-          <li><span class="p-check">✓</span>Custom email templates</li>
-          <li><span class="p-check">✓</span>White-label CSV exports</li>
-          <li><span class="p-check">✓</span>API access (coming soon)</li>
-          <li><span class="p-check">✓</span>Dedicated account manager</li>
+          <li><span class="p-check">✓</span>Priority email support</li>
+          <li><span class="p-check">✓</span>Early access to new features</li>
+          <li><span class="p-check">✓</span>Custom onboarding call</li>
         </ul>
-        <!-- 👇 Replace with your Stripe Payment Link -->
-        <a href="https://buy.stripe.com/YOUR_AGENCY_LINK" class="btn-p-outline" id="agency-btn">Get Agency — $49/mo</a>
+        <a href="https://buy.stripe.com/YOUR_AGENCY_LINK" class="btn-p-outline" id="agency-btn">Get Agency — $29/mo</a>
       </div>
     </div>
   </div>
@@ -911,20 +908,20 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
 });
 
 // Pricing toggle
-const prices = { monthly: { pro: 19, agency: 49 }, annual: { pro: 13, agency: 34 } };
+const prices = { monthly: { pro: 12, agency: 29 }, annual: { pro: 8, agency: 20 } };
 document.getElementById('tog-monthly').addEventListener('click', function() {
   this.classList.add('on'); document.getElementById('tog-annual').classList.remove('on');
   document.getElementById('pro-price').textContent = prices.monthly.pro;
   document.getElementById('agency-price').textContent = prices.monthly.agency;
-  document.getElementById('pro-btn').textContent = 'Start Pro — $19/mo';
-  document.getElementById('agency-btn').textContent = 'Get Agency — $49/mo';
+  document.getElementById('pro-btn').textContent = 'Start Pro — $12/mo';
+  document.getElementById('agency-btn').textContent = 'Get Agency — $29/mo';
 });
 document.getElementById('tog-annual').addEventListener('click', function() {
   this.classList.add('on'); document.getElementById('tog-monthly').classList.remove('on');
   document.getElementById('pro-price').textContent = prices.annual.pro;
   document.getElementById('agency-price').textContent = prices.annual.agency;
-  document.getElementById('pro-btn').textContent = 'Start Pro — $13/mo';
-  document.getElementById('agency-btn').textContent = 'Get Agency — $34/mo';
+  document.getElementById('pro-btn').textContent = 'Start Pro — $8/mo';
+  document.getElementById('agency-btn').textContent = 'Get Agency — $20/mo';
 });
 
 // Smooth scroll
