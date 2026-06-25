@@ -800,7 +800,7 @@ section{padding:96px 0;}
       <div class="p-card p-pop">
         <div class="p-badge">⚡ Most Popular</div>
         <div class="p-tier">Pro</div>
-        <div class="p-price"><span class="p-curr">$</span><span class="p-amount" id="pro-price">12</span><span class="p-period">/mo</span></div>
+        <div class="p-price"><span class="p-curr">$</span><span class="p-amount" id="pro-price">9.9</span><span class="p-period">/mo</span></div>
         <p class="p-desc">For marketers who need unlimited Instagram discovery and email outreach.</p>
         <div class="p-div"></div>
         <ul class="p-feats">
@@ -812,7 +812,7 @@ section{padding:96px 0;}
           <li><span class="p-check">✓</span>Country & engagement filters</li>
           <li><span class="p-check">✓</span>Email support</li>
         </ul>
-        <a href="https://buy.stripe.com/YOUR_PRO_LINK" class="btn-p-fill" id="pro-btn">Start Pro — $12/mo</a>
+        <a href="https://buy.stripe.com/YOUR_PRO_LINK" class="btn-p-fill" id="pro-btn">Start Pro — $9.9/mo</a>
       </div>
       <!-- Agency -->
       <div class="p-card">
@@ -908,19 +908,19 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
 });
 
 // Pricing toggle
-const prices = { monthly: { pro: 12, agency: 29 }, annual: { pro: 8, agency: 20 } };
+const prices = { monthly: { pro: '9.9', agency: 29 }, annual: { pro: '6.9', agency: 20 } };
 document.getElementById('tog-monthly').addEventListener('click', function() {
   this.classList.add('on'); document.getElementById('tog-annual').classList.remove('on');
   document.getElementById('pro-price').textContent = prices.monthly.pro;
   document.getElementById('agency-price').textContent = prices.monthly.agency;
-  document.getElementById('pro-btn').textContent = 'Start Pro — $12/mo';
+  document.getElementById('pro-btn').textContent = 'Start Pro — $9.9/mo';
   document.getElementById('agency-btn').textContent = 'Get Agency — $29/mo';
 });
 document.getElementById('tog-annual').addEventListener('click', function() {
   this.classList.add('on'); document.getElementById('tog-monthly').classList.remove('on');
   document.getElementById('pro-price').textContent = prices.annual.pro;
   document.getElementById('agency-price').textContent = prices.annual.agency;
-  document.getElementById('pro-btn').textContent = 'Start Pro — $8/mo';
+  document.getElementById('pro-btn').textContent = 'Start Pro — $6.9/mo';
   document.getElementById('agency-btn').textContent = 'Get Agency — $20/mo';
 });
 
