@@ -817,7 +817,7 @@ section{padding:96px 0;}
       <!-- Agency -->
       <div class="p-card">
         <div class="p-tier">Agency</div>
-        <div class="p-price"><span class="p-curr">$</span><span class="p-amount" id="agency-price">29</span><span class="p-period">/mo</span></div>
+        <div class="p-price"><span class="p-curr">$</span><span class="p-amount" id="agency-price">29.9</span><span class="p-period">/mo</span></div>
         <p class="p-desc">For teams and agencies managing multiple brand campaigns.</p>
         <div class="p-div"></div>
         <ul class="p-feats">
@@ -828,7 +828,7 @@ section{padding:96px 0;}
           <li><span class="p-check">✓</span>Early access to new features</li>
           <li><span class="p-check">✓</span>Custom onboarding call</li>
         </ul>
-        <a href="https://buy.stripe.com/YOUR_AGENCY_LINK" class="btn-p-outline" id="agency-btn">Get Agency — $29/mo</a>
+        <a href="https://buy.stripe.com/YOUR_AGENCY_LINK" class="btn-p-outline" id="agency-btn">Get Agency — $29.9/mo</a>
       </div>
     </div>
   </div>
@@ -908,13 +908,13 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
 });
 
 // Pricing toggle
-const prices = { monthly: { pro: '9.9', agency: 29 }, annual: { pro: '6.9', agency: 20 } };
+const prices = { monthly: { pro: '9.9', agency: 29.9 }, annual: { pro: '6.9', agency: 20 } };
 document.getElementById('tog-monthly').addEventListener('click', function() {
   this.classList.add('on'); document.getElementById('tog-annual').classList.remove('on');
   document.getElementById('pro-price').textContent = prices.monthly.pro;
   document.getElementById('agency-price').textContent = prices.monthly.agency;
   document.getElementById('pro-btn').textContent = 'Start Pro — $9.9/mo';
-  document.getElementById('agency-btn').textContent = 'Get Agency — $29/mo';
+  document.getElementById('agency-btn').textContent = 'Get Agency — $29.9/mo';
 });
 document.getElementById('tog-annual').addEventListener('click', function() {
   this.classList.add('on'); document.getElementById('tog-monthly').classList.remove('on');
